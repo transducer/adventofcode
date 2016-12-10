@@ -29,7 +29,7 @@
 
 ;; Part 2
 
-(defn triangle-cols
+(defn to-triangle-cols
   [rows]
   (->> rows
        (apply mapv vector)
@@ -37,6 +37,6 @@
 
 (->> input
      parse
-     triangle-cols
+     to-triangle-cols
      (filter valid-triangle)
      count)
