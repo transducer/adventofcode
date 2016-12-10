@@ -37,13 +37,6 @@
        (reductions
         (fn [[positions direction] [turn distance]]
           (let [direction (update-direction direction turn)
-                [x y]     (last positions)
-                x         (cond-> x
-                            (= direction :east) (+ x distance)
-                            (= direction :west) (- x distance))
-                y         (cond-> y
-                            (= direction :south) (- y distance)
-                            (= direction :north) (+ y distance))
                 visited   (get-points-visited (last positions) direction distance)]
             [visited direction]))
         [[[0 0]] :north])
