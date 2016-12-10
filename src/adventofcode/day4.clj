@@ -35,4 +35,32 @@
      parse
      (filter real-room?)
      (map second)
-     (reduce +))
+     (apply +))
+
+
+;; Part 2
+
+(defn shift-char
+  [c]
+  (if (= c \z) \a
+      (-> c int inc char)))
+
+(defn decrypt
+  [[name sector checksum]]
+  [(->> name
+        (map #((apply comp (repeat sector shift-char)) %))
+        (apply str))
+   sector
+   checksum])
+
+(defn north-pole-objects?
+  [[name _ _]]
+  (.contains name "north"))
+
+(->> input
+     parse
+     (filter real-room?)
+     (map decrypt)
+     (filter north-pole-objects?)
+     first
+     second)
