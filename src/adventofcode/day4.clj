@@ -10,21 +10,18 @@
 
 (defn parse
   [data]
-  (map (fn [[name-sector checksum]] (conj ((juxt #(str/replace % #"\d+" "")
-                                                 #(Integer/parseInt (re-find #"\d+" %)))
-                                           name-sector)
-                                          checksum))
+  (map (fn [[name-sector checksum]]
+         (conj ((juxt #(str/replace % #"\d+" "")
+                      #(Integer/parseInt (re-find #"\d+" %)))
+                name-sector)
+               checksum))
        (map #(str/split (str/replace % #"\]|-" "") #"\[") data)))
 
 (defn real-room?
   [[name sector checksum]]
   (let [freqs     (->> name
                        frequencies
-                       (sort-by (juxt second first) #(let [[freq1 id1] %1
-                                                           [freq2 id2] %2]
-                                                       (if (= freq1 freq2)
-                                                         (compare id1 id2)
-                                                         (compare freq2 freq1)))))
+                       (sort-by (fn [[a b]] [(- b) a])))
         five-most (apply str (take 5 (map first freqs)))]
     (= checksum five-most)))
 
