@@ -10,15 +10,16 @@
 
 (defn parse
   [data]
-  (map (fn [[name-sector checksum]]
-         (conj ((juxt #(str/replace % #"\d+" "")
-                      #(Integer/parseInt (re-find #"\d+" %)))
-                name-sector)
-               checksum))
-       (map #(str/split (str/replace % #"\]|-" "") #"\[") data)))
+  (map (fn [line]
+         (let [cleaned (str/replace line #"\]|-" "")
+               parts   (str/split cleaned #"\[")]
+           {:name     (str/replace (first parts) #"\d+" "")
+            :sector   (Integer/parseInt (re-find #"\d+" (first parts)))
+            :checksum (second parts)}))
+       data))
 
 (defn real-room?
-  [[name sector checksum]]
+  [{:keys [name checksum]}]
   (let [freqs     (->> name
                        frequencies
                        (sort-by (fn [[a b]] [(- b) a])))
@@ -31,7 +32,7 @@
 (->> input
      parse
      (filter real-room?)
-     (map second)
+     (map :sector)
      (apply +))
 
 
@@ -43,16 +44,15 @@
       (-> c int inc char)))
 
 (defn decrypt
-  [[name sector checksum]]
-  [(->> name
-        (map #((apply comp (repeat sector shift-char)) %))
-        (apply str))
-   sector
-   checksum])
+  [{:keys [name sector checksum] :as room}]
+  (assoc room :decrypted
+         (->> name
+              (map #((apply comp (repeat sector shift-char)) %))
+              (apply str))))
 
 (defn north-pole-objects?
-  [[name _ _]]
-  (.contains name "north"))
+  [{:keys [decrypted]}]
+  (.contains decrypted "north"))
 
 (->> input
      parse
@@ -60,4 +60,4 @@
      (map decrypt)
      (filter north-pole-objects?)
      first
-     second)
+     :sector)
