@@ -1,12 +1,8 @@
 (ns adventofcode.day6
-  (:require [clojure.java.io :as io]
-            [clojure.string :as str]))
+  (:require [clojure.java.io :as io]))
 
 (def input
-  (-> "day6.txt"
-      io/resource
-      io/reader
-      line-seq))
+  (-> "day6.txt" io/resource io/reader line-seq))
 
 (defn transpose
   [d]
