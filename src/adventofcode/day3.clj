@@ -12,7 +12,7 @@
        (map #(str/split % #"\s+"))
        (map (fn [t] (map #(Integer/parseInt %) t)))))
 
-(defn valid-triangle
+(defn valid-triangle?
   [[a b c]]
   (and (> (+ a b) c)
        (> (+ a c) b)
@@ -23,7 +23,7 @@
 
 (->> input
      parse
-     (filter valid-triangle)
+     (filter valid-triangle?)
      count)
 
 
@@ -38,5 +38,5 @@
 (->> input
      parse
      to-triangle-cols
-     (filter valid-triangle)
+     (filter valid-triangle?)
      count)

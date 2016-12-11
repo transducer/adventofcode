@@ -40,7 +40,7 @@
     (max (dec idx) 0)
     (or (row idx) pos)))
 
-(defn get-segment-with-pos
+(defn segment-with-pos
   [segments pos]
   (->> segments
        (filter (fn [s] (some #(= % pos) s)))
@@ -48,17 +48,17 @@
 
 (defn change-pos
   [keypad move pos]
-  (let [segment (get-segment-with-pos ({\U (cols keypad)
-                                        \D (cols keypad)
-                                        \R (rows keypad)
-                                        \L (rows keypad)} move) pos)]
+  (let [segment (segment-with-pos ({\U (cols keypad)
+                                    \D (cols keypad)
+                                    \R (rows keypad)
+                                    \L (rows keypad)} move) pos)]
     (({\U up \L left \R right \D down} move) segment pos)))
 
 (defn new-pos
   [keypad instruction pos]
   (reduce #(change-pos keypad %2 %1) pos instruction))
 
-(defn get-code
+(defn code
   [keypad instructions]
   (->> instructions
        (reduce (fn [[pos code] instruction]
@@ -77,7 +77,7 @@
 
 (->> input
      parse
-     (get-code keypad))
+     (code keypad))
 
 
 ;; Part 2
@@ -91,4 +91,4 @@
 
 (->> input
      parse
-     (get-code keypad))
+     (code keypad))

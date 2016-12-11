@@ -19,7 +19,7 @@
         new-direction (directions new-idx)]
     new-direction))
 
-(defn get-points-visited
+(defn points-visited
   [pos direction dist]
   (->> pos
        (iterate (fn [[x y]]
@@ -31,19 +31,19 @@
        (take (inc dist))
        rest))
 
-(defn get-positions
+(defn positions
   [movements]
   (->> movements
        (reductions
         (fn [[positions direction] [turn distance]]
           (let [direction (update-direction direction turn)
-                visited   (get-points-visited (last positions) direction distance)]
+                visited   (points-visited (last positions) direction distance)]
             [visited direction]))
         [[[0 0]] :north])
        (mapcat first)
        vec))
 
-(defn calc-distance
+(defn distance
   [point]
   (apply + (map #(Math/abs %) point)))
 
@@ -52,9 +52,9 @@
 
 (->> input
      parse
-     get-positions
+     positions
      last
-     calc-distance)
+     distance)
 
 
 ;; Part 2
@@ -70,6 +70,6 @@
 
 (->> input
      parse
-     get-positions
+     positions
      first-visited-twice
-     calc-distance)
+     distance)
