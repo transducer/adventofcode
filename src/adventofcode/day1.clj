@@ -50,11 +50,11 @@
 
 ;; Part 1
 
-(->> input
-     parse
-     positions
-     last
-     distance)
+(-> input
+    parse
+    positions
+    last
+    distance)
 
 
 ;; Part 2
@@ -68,8 +68,8 @@
         curr
         (recur (inc n))))))
 
-(->> input
-     parse
-     positions
-     first-visited-twice
-     distance)
+(-> input
+    parse
+    positions
+    first-visited-twice
+    distance)
