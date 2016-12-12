@@ -49,10 +49,8 @@
     (conj others current new-room)))
 
 (defn new-states
-  [d move]
-  (let [floors (:floors move)
-        elems  (:elems move)]
-    (map #(take-elevator d % elems) floors)))
+  [d {:keys [floors elems]}]
+  (map #(take-elevator d % elems) floors))
 
 (def counter (atom 0))
 
@@ -62,9 +60,8 @@
     (mapcat #(new-states d %) moves)))
 
 (defn safe?
-  [floor]
-  (let [elems       (:elems floor)
-        micro-chips (materials elems \M)
+  [{:keys [elems] :as floor}]
+  (let [micro-chips (materials elems \M)
         generators  (materials elems \G)]
     ;; Do not keep micro-chip on floor with generator for other material
     ;; Unless micro-chip is of same material as generator
