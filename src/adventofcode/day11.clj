@@ -17,23 +17,15 @@
   (let [room            (current-room d)
         elems           (:elems room)
         floor           (:floor room)
-        possible-floors (range 1 5)
+        possible-floors (filter #(and (>= % 1) (<= % 4)) [(inc floor) (dec floor)])
         ;; At most two in the elevator each move. Or nothing.
         combs           (concat
-                         (combinations elems 0)
                          (combinations elems 1)
                          (combinations elems 2))
         ;; Move every one or two elems (every possible combination) to every
         ;; possible floor
         moves           (map #(hash-map :floors possible-floors :elems %) combs)]
     moves))
-
-(defn materials
-  [elems type]
-  (->> elems
-       (filter #(= (second (name %)) type))
-       (map #(first (name %)))
-       set))
 
 (defn take-elevator
   [d floor elems]
@@ -59,16 +51,20 @@
   (let [moves (possible-moves d)]
     (mapcat #(new-states d %) moves)))
 
+(defn materials
+  [elems type]
+  (->> elems
+       (filter #(= (second (name %)) type))
+       (map #(first (name %)))
+       set))
+
 (defn safe?
   [{:keys [elems] :as floor}]
   (let [micro-chips (materials elems \M)
         generators  (materials elems \G)]
-    ;; Do not keep micro-chip on floor with generator for other material
-    ;; Unless micro-chip is of same material as generator
-    (let [generators-without-chip (set/difference generators micro-chips)
-          micro-chips-without-gen (set/difference micro-chips generators)]
-      (not (and (not-empty generators-without-chip)
-                (not-empty micro-chips-without-gen))))))
+    ;; Do not keep unconnected micro-chip on floor with generator of other material.
+    (or (empty? generators)
+        (empty? (set/difference micro-chips generators)))))
 
 (defn valid-state?
   [d]
@@ -82,16 +78,5 @@
        empty?))
 
 
+
 ;; Part 1
-
-(->> input
-     list
-     (iterate #(mapcat possible-new-states %))
-     (take 2))
-
-#_(->> input
-     list
-     (iterate #(mapcat possible-new-states %))
-     (filter valid-state?)
-     (filter finished?)
-     first)
