@@ -20,9 +20,9 @@
        (some #(re-find #"(?=(.)(.)\2\1)(.)(?!\1).*" %))))
 
 (defn tls?
-  [ip]
-  (and (some abba? (first ip))
-       (not (some abba? (second ip)))))
+  [[inside outside]]
+  (and (some abba? inside)
+       (not (some abba? outside))))
 
 
 ;; Part 1
