@@ -11,12 +11,17 @@
              #(map second (re-seq #"\[(.*?)\]" %)))
        d))
 
+(defn parts
+  [size s]
+  (->> (range size)
+       (mapcat #(->> (partition size (subs s %))
+                     (map (fn [cs] (apply str cs)))))
+       concat))
+
 (defn abba?
   [s]
-  (->> [0 1 2 3]
-       (mapcat #(->> (partition 4 (subs s %))
-                     (map (fn [cs] (apply str cs)))))
-       concat
+  (->> s
+       (parts 4)
        (some #(re-find #"(?=(.)(.)\2\1)(.)(?!\1).*" %))))
 
 (defn tls?
@@ -37,10 +42,8 @@
 
 (defn candidates
   [s]
-  (->> [0 1 2]
-       (mapcat #(->> (partition 3 (subs s %))
-                     (map (fn [cs] (apply str cs)))))
-       concat
+  (->> s
+       (parts 3)
        (filter #(re-find #"(?=(.).\1)(.)(?!\1).*" %))))
 
 (defn ssl?
