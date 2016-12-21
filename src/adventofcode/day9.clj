@@ -68,3 +68,34 @@
      non-neutralized
      (decompress parsed-input)
      count)
+
+
+;; Part 2
+
+(def starts-with-instruction-regex #"^(\((\d+)x(\d+)\)).*")
+
+(defn expand-and-count
+  [d acc]
+  (let [[match group n i] (re-matches starts-with-instruction-regex d)]
+    (cond match
+          (let [n (Integer/parseInt n)
+                i (Integer/parseInt i)]
+            (+ (* (expand-and-count (->> d
+                                         (drop (count group))
+                                         (take n)
+                                         (apply str))
+                                    0)
+                  i)
+               (expand-and-count (->> d
+                                      (drop (+ n (count group)))
+                                      (apply str))
+                                 0)
+               acc))
+
+          (not-empty d)
+          (recur (apply str (rest d)) (inc acc))
+
+          :else
+          acc)))
+
+(expand-and-count parsed-input 0)
