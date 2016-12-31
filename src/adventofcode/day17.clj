@@ -63,15 +63,15 @@
   "Breadth-first search to find length of longest path from start to finish."
   [start neighbors finish]
   (loop [frontier {"" start}
-         paths    []]
+         longest  0]
     (if-let [[path pos] (first frontier)]
       (if (= pos finish)
         (recur (into {} (next frontier))
-               (conj paths path))
+               (max longest (count path)))
         (let [new-frontier (neighbors path pos)]
           (recur (merge (into {} (next frontier)) new-frontier)
-                 paths)))
-      (->> paths (map count) sort last))))
+                 longest)))
+      longest)))
 
 (longest-path [0 0] neighbors [3 3])
 ;; => 766
