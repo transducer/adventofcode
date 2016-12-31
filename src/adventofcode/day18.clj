@@ -16,28 +16,20 @@
 (defn new-row [previous]
   (mapv (partial new-tile previous) (range width)))
 
+(defn count-safe-tiles [num-rows]
+  (->> input
+       parse
+       (iterate new-row)
+       (take num-rows)
+       flatten
+       (filter #{\.})
+       count))
 
 ;; Part 1
 
-(->> input
-     parse
-     (iterate new-row)
-     (take 40)
-     flatten
-     (filter #{\.})
-     count)
-
-;; => 1939
+(count-safe-tiles 40) ; => 1939
 
 
 ;; Part 2
 
-(->> input
-     parse
-     (iterate new-row)
-     (take 400000)
-     flatten
-     (filter #{\.})
-     count)
-
-;; => 19999535
+(count-safe-tiles 400000) ; => 19999535
