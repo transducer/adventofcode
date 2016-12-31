@@ -13,8 +13,8 @@
        (filter #(first (vals %)))
        (mapcat keys)))
 
-(assert (= (allowed-directions "DU") '(\R)))
-(assert (empty? (allowed-directions "DUR")))
+#_(assert (= (allowed-directions "DU") '(\R)))
+#_(assert (empty? (allowed-directions "DUR")))
 
 (def moves
   {\U (fn [[x y]] [x (dec y)])
@@ -28,8 +28,6 @@
   (and (<= 0 x (dec grid-size))
        (<= 0 y (dec grid-size))))
 
-(allowed-move? [0 0] ((moves (allowed-directions "D")) \L) 4)
-
 (defn neighbors
   "Returns map of path and position."
   [path position]
@@ -41,7 +39,7 @@
 
 (def min-length #(min (count %1) (count %2)))
 
-(defn shortest-path
+(defn dijkstra
   "Finds shortest path from start to finish. For a node n (neighbors n) should
   return a map of its valid successors with as key path and value position."
   [start neighbors finish]
@@ -52,5 +50,28 @@
         (let [new-frontier (neighbors path pos)]
           (recur (into (sorted-map-by min-length) (merge (butlast frontier) new-frontier))))))))
 
-(shortest-path [0 0] neighbors [3 3])
+
+;; Part 1
+
+(dijkstra [0 0] neighbors [3 3])
 ;; => "RDDRULDDRR"
+
+
+;; Part 2
+
+(defn longest-path
+  "Breadth-first search to find length of longest path from start to finish."
+  [start neighbors finish]
+  (loop [frontier {"" start}
+         paths    []]
+    (if-let [[path pos] (first frontier)]
+      (if (= pos finish)
+        (recur (into {} (next frontier))
+               (conj paths path))
+        (let [new-frontier (neighbors path pos)]
+          (recur (merge (into {} (next frontier)) new-frontier)
+                 paths)))
+      (->> paths (map count) sort last))))
+
+(longest-path [0 0] neighbors [3 3])
+;; => 766
