@@ -40,3 +40,18 @@
 
 
 ;; Part 2
+
+(def p
+  (loop [i 3]
+    (if (< (* 3 i) num-elves)
+      (recur (* 3 i))
+      i)))
+
+(if (<= num-elves (* 2 p))
+  (- num-elves p)
+  (let [r (mod num-elves p)]
+    (if (zero? r)
+      num-elves
+      (+ r (- num-elves p)))))
+
+;; => 1410967
