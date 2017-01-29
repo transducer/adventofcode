@@ -36,33 +36,13 @@
 
 ; Part 2
 
-;; FIXME
+(->> (parse input)
+     (sort-by first)
+     (reduce (fn [[highest cnt] [start end]]
+                 [(max highest end) (if (> start (inc highest))
+                                      (+ cnt (dec (- start highest)))
+                                      cnt)])
+             [0 0])
+     second)
 
-(let [d (sort-by first (parse input))]
-  (loop [sorted        d
-         [start1 end1] (first d)
-         high-end      end1
-         [start2 end2] (second d)
-         ip-count      0]
-    (if (empty? d)
-      ip-count
-      ;; If start1 is at least two bigger than highest, we have found an
-      ;; IP, and we can add the range till start2 to our count of IPs
-      ;; and recur from start2.
-      (if (> (dec start1) high-end)
-        (do
-          (println ip-count) ;; print answer ignore NPE :)
-          (recur (next sorted)
-                 (second (next sorted))
-                 (max end2 high-end)
-                 (nth (next sorted) 3)
-                 (+ ip-count (- (inc start1) high-end))))
-        ;; Else, find next range to check, by iterating till we find a new start
-        ;; that is bigger than end1
-        (recur (next sorted)
-               (first (next sorted))
-               ;; We will check the ends in the ranges, if they are higher than
-               ;; end1, we update end1 with the new higher value
-               (max end1 high-end)
-               (second (next sorted))
-               ip-count)))))
+;; => 146
