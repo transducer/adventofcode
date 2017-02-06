@@ -18,10 +18,10 @@
       (let [[cmd n1 n2] (instructions pos)]
         (case cmd
           "cpy" (recur (assoc registers n2 (or (registers n1) n1)) (inc pos))
-          "jnz" (let [val (or (registers n1) n1)]
-                  (recur registers ((cond (> val 0) +
-                                          (< val 0) -
-                                          :else     inc) pos)))
+          "jnz" (let [val1 (or (registers n1) n1)
+                      val2 (or (registers n2) n2)]
+                  (recur registers ((if (= val 0) inc
+                                        (partial + val2)) pos)))
           "inc" (recur (update registers n1 inc) (inc pos))
           "dec" (recur (update registers n1 dec) (inc pos))))))
 
