@@ -12,7 +12,7 @@
   (apply concat (map-indexed f c)))
 
 (defn parse
-  "Creates map from coords [x,y] to type (\\#, \\. and \1, \2, ... \n)."
+  "Creates map from coords [x,y] to type (\\#, \\. and \\1, \\2, ... \\n)."
   [lines]
   (apply hash-map
          (mapcat-indexed
@@ -89,7 +89,7 @@
 
 (defn possible-paths
   "Possible paths are start with all permutations of the next destinations
-  added. Results in sequence of [start ends], a to b, b to c, ... n-1 to n."
+  added. Results in sequence of [start end], [a b], [b c], ... [n-1 n]."
   [[start & to-visit :as destinations]]
   (->> (permutations to-visit)
        (map #(conj % start))
@@ -102,16 +102,38 @@
                [route (A* start target successors heuristic)]))
        (into {})))
 
+(defn distance-of-path [path]
+  (reduce
+   (fn [dist [a b]] (+ dist (or (distances [a b]) (distances [b a]))))
+   0
+   path))
+
 
 ;; Part 1
 
 (->> destinations
      possible-paths
-     (map #(reduce
-            (fn [dist [a b]] (+ dist (or (distances [a b]) (distances [b a]))))
-            0
-            %))
+     (map distance-of-path)
      sort
      first)
 
 ;; => 518
+
+
+;; Part 2
+
+(defn possible-paths-back-to-start
+  "Possible paths are start with all permutations of the next destinations
+  added. Results in sequence of [start end], [a b], [b c], ... [n-1 n], [n a]."
+  [[start & to-visit :as destinations]]
+  (->> (permutations to-visit)
+       (map #(concat [start] % [start]))
+       (map (partial partition 2 1))))
+
+(->> destinations
+     possible-paths-back-to-start
+     (map distance-of-path)
+     sort
+     first)
+
+;; => 716
