@@ -3,7 +3,7 @@
             [clojure.string :as string]))
 
 (def step->dependencies
-  (->> (io/resource "day7.txt")
+  (->> (io/resource "2018/day7.txt")
        slurp
        string/split-lines
        (map #(re-seq #"[A-Z]" (string/replace-first % #"S" "")))

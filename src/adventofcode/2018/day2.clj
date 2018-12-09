@@ -2,7 +2,7 @@
   (:require [clojure.java.io :as io]))
 
 (def input
-  (-> "day2.txt" io/resource io/reader line-seq))
+  (-> "2018/day2.txt" io/resource io/reader line-seq))
 
 
 ;; Part 1

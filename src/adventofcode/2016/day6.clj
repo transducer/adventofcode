@@ -2,7 +2,7 @@
   (:require [clojure.java.io :as io]))
 
 (def input
-  (-> "day6.txt" io/resource io/reader line-seq))
+  (-> "2016/day6.txt" io/resource io/reader line-seq))
 
 (defn transpose
   [d]

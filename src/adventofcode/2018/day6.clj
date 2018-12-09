@@ -4,7 +4,7 @@
   (:import clojure.lang.PersistentQueue))
 
 (def coordinates
-  (->> (io/resource "day6.txt")
+  (->> (io/resource "2018/day6.txt")
        slurp
        (format "[%s]")
        read-string

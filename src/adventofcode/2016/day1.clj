@@ -2,7 +2,7 @@
   (:require [clojure.string :as str]))
 
 (def input
-  (-> "resources/day1.txt" slurp str/trim-newline (str/split #", ")))
+  (-> "resources/2016/day1.txt" slurp str/trim-newline (str/split #", ")))
 
 (defn parse
   [data]

@@ -2,7 +2,7 @@
   (:require [clojure.java.io :as io]))
 
 (def input
-  (->> (io/resource "day1.txt")
+  (->> (io/resource "2018/day1.txt")
        slurp
        (format "(%s)")
        read-string))

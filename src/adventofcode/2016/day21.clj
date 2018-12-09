@@ -4,7 +4,7 @@
             [clojure.math.combinatorics :refer [permutations]]))
 
 (def password "abcdefgh")
-(def input (-> "day21.txt" io/resource io/reader line-seq))
+(def input (-> "2016/day21.txt" io/resource io/reader line-seq))
 
 (defn parse [d]
   (map #(str/split % #"\s") d))

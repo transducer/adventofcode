@@ -2,7 +2,7 @@
   (:require [clojure.java.io :as io]))
 
 (def input
-  (-> "day10.txt" io/resource io/reader line-seq))
+  (-> "2016/day10.txt" io/resource io/reader line-seq))
 
 (def is-chip-regex #"^value.*")
 (def number-regex #"\d+")

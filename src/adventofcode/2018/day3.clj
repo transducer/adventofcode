@@ -2,7 +2,7 @@
   (:require [clojure.java.io :as io]))
 
 (def input
-  (-> "day3.txt" io/resource io/reader line-seq))
+  (-> "2018/day3.txt" io/resource io/reader line-seq))
 
 (defn parse-int [s]
   (Integer/parseInt s))

@@ -2,7 +2,7 @@
   (:require [clojure.java.io :as io]
             [clojure.string :as str]))
 
-(def input (-> "day18.txt" io/resource slurp str/trim-newline))
+(def input (-> "2016/day18.txt" io/resource slurp str/trim-newline))
 (def parse (partial mapv char))
 (def width (count (parse input)))
 

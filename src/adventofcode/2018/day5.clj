@@ -3,7 +3,7 @@
             [clojure.string :as string]))
 
 (def input
-  (-> "day5.txt" io/resource slurp string/trim-newline))
+  (-> "2018/day5.txt" io/resource slurp string/trim-newline))
 
 
 ;; Part 1

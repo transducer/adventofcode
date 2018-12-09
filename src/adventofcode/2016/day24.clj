@@ -6,7 +6,7 @@
             [clojure.string :as str]))
 
 (def input
-  (-> "day24.txt" io/resource io/reader line-seq))
+  (-> "2016/day24.txt" io/resource io/reader line-seq))
 
 (defn mapcat-indexed [f c]
   (apply concat (map-indexed f c)))

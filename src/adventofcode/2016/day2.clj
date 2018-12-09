@@ -2,7 +2,7 @@
   (:require [clojure.string :as str]))
 
 (def input
-  (slurp "resources/day2.txt"))
+  (slurp "resources/2016/day2.txt"))
 
 (defn parse
   [data]

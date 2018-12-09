@@ -3,7 +3,7 @@
             [clojure.string :as str]))
 
 (def input
-  (-> "day4.txt"
+  (-> "2016/day4.txt"
       io/resource
       io/reader
       line-seq))
