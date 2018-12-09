@@ -1,4 +1,4 @@
-(ns adventofcode.day1
+(ns adventofcode.2016.day1
   (:require [clojure.string :as str]))
 
 (def input

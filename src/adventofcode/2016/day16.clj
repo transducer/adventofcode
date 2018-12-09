@@ -1,4 +1,4 @@
-(ns adventofcode.day16)
+(ns adventofcode.2016.day16)
 
 (def input "10010000000110000")
 

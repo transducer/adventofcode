@@ -1,4 +1,4 @@
-(ns adventofcode.day5
+(ns adventofcode.2016.day5
   (:require [digest :refer [md5]]))
 
 (def input

@@ -1,6 +1,6 @@
 # adventofcode
 
-[Advent of Code](http://adventofcode.com/2016) solutions in Clojure.
+[Advent of Code](https://adventofcode.com) solutions in Clojure.
 
 ## Usage
 

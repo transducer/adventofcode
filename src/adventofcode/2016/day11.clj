@@ -1,4 +1,4 @@
-(ns adventofcode.day11)
+(ns adventofcode.2016.day11)
 
 ;; I gave up and looked at
 ;; https://www.reddit.com/r/adventofcode/comments/5hoia9/2016_day_11_solutions/

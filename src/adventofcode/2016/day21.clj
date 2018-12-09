@@ -1,4 +1,4 @@
-(ns adventofcode.day21
+(ns adventofcode.2016.day21
   (:require [clojure.java.io :as io]
             [clojure.string :as str]
             [clojure.math.combinatorics :refer [permutations]]))

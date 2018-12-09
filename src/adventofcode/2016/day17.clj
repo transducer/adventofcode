@@ -1,4 +1,4 @@
-(ns adventofcode.day17
+(ns adventofcode.2016.day17
   (:require [digest :refer [md5]]
             [clojure.set :as set]))
 

@@ -1,4 +1,4 @@
-(ns adventofcode.day15
+(ns adventofcode.2016.day15
   (:require [clojure.java.io :as io]))
 
 (def input (-> "day15.txt" io/resource io/reader line-seq))

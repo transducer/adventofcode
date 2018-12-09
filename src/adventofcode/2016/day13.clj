@@ -1,4 +1,4 @@
-(ns adventofcode.day13
+(ns adventofcode.2016.day13
   (:require [clojure.data.priority-map :refer [priority-map]]))
 
 (def input 1352)

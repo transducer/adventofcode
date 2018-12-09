@@ -1,4 +1,4 @@
-(ns adventofcode.day24
+(ns adventofcode.2016.day24
   (:require [clojure.data.priority-map :refer [priority-map]]
             [clojure.java.io :as io]
             [clojure.math.combinatorics :refer [permutations combinations]]

@@ -1,4 +1,4 @@
-(ns adventofcode.day6
+(ns adventofcode.2016.day6
   (:require [clojure.java.io :as io]))
 
 (def input

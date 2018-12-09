@@ -1,4 +1,4 @@
-(ns adventofcode.day19)
+(ns adventofcode.2016.day19)
 
 (def num-elves 3005290)
 
