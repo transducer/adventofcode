@@ -36,20 +36,51 @@
 (defn neighbours-in-grid [[x y]]
   (filter within-grid? (neighbours [x y])))
 
-(defn breadth-first-search [coord neighbours]
-  ((fn bfs [queue]
-     (lazy-seq
-      (when (seq queue)
-        (let [new-coord (peek queue)
-              children (neighbours new-coord)]
-          (cons [coord new-coord] (bfs (into (pop queue) children)))))))
-   (conj PersistentQueue/EMPTY coord)))
+(defn on-edge?
+  "If a point is on the edge, the area that contains the pont is infinite."
+  [[x y]]
+  (let [[lowest-x lowest-y] grid-top-left
+        [highest-x highest-y] grid-bottom-right]
+    (or (= x highest-x) (= x lowest-x) (= y highest-y) (= y lowest-y))))
 
-(map #(breadth-first-search % neighbours-in-grid) coordinates)
+(defn inc-distance [d frontier]
+  (into {} (for [s frontier] [s (inc d)])))
 
-;; TODO:
-;; - breadth-first all locations
-;; - Mark who has reached the earliest, and make a boundary when two have reached the same time
-;; - sort-by starting coordinate
-;; - count starting coordinates
-;; - remove those breadth-first results that have reached the edge
+(defn breadth-first-search
+  "Finds (non-lazily for now) all distinct nodes and their distance."
+  [start neighbours]
+  (loop [queue (conj PersistentQueue/EMPTY start)
+         distances {start [0 start]}] ;; coord -> [distance start]
+    (if-let [coord (peek queue)]
+      (let [frontier (into {}
+                           (for [c (remove #(distances %) (neighbours coord))]
+                             [c [(inc (first (distances coord))) start]]))]
+        (recur (apply conj (pop queue) (keys frontier))
+               (merge-with #(min (first %1) (first %2)) distances frontier)))
+      distances)))
+
+(->> (reduce
+      (fn [acc [coord [dist start]]]
+        (if-let [prev-coord (acc coord)]
+          (let [[prev-dist prev-start boundary?] prev-coord]
+
+            ;; Like every interesting procedure, it's a case analysis. (https://youtu.be/0m6hoOelZH8?t=331)
+            (cond boundary?
+                  (if (> prev-dist dist)
+                    (assoc acc coord [dist start false])
+                    acc)
+                  (= prev-dist dist)
+                  (assoc acc coord [dist start true])
+                  (> prev-dist dist)
+                  (assoc acc coord [dist start false])
+                  :else acc))
+          (assoc acc coord [dist start false])))
+      {} ; -> map of coord -> [distance start boundary?]
+      (->> (map #(breadth-first-search % neighbours-in-grid) coordinates)
+           (apply interleave)))
+     (filter (fn [[_coord [_dist _start boundary?]]] (not boundary?)))
+     (group-by (fn [[_coord [_dist start _boundary]]] start))
+     (map (fn [[start coord->dist-start-boundaries]] [start (keys coord->dist-start-boundaries)]))
+     (remove (fn [[_start coords-closest]] (some #(on-edge? %) coords-closest)))
+     (map (fn [[_start coords-closest]] (count coords-closest)))
+     (apply max))
