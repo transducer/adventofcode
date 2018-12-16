@@ -63,13 +63,8 @@
       (fn [acc [coord [dist start]]]
         (if-let [prev-coord (acc coord)]
           (let [[prev-dist prev-start boundary?] prev-coord]
-
             ;; Like every interesting procedure, it's a case analysis. (https://youtu.be/0m6hoOelZH8?t=331)
-            (cond boundary?
-                  (if (> prev-dist dist)
-                    (assoc acc coord [dist start false])
-                    acc)
-                  (= prev-dist dist)
+            (cond (= prev-dist dist)
                   (assoc acc coord [dist start true])
                   (> prev-dist dist)
                   (assoc acc coord [dist start false])
