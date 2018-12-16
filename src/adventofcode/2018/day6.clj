@@ -43,9 +43,6 @@
         [highest-x highest-y] grid-bottom-right]
     (or (= x highest-x) (= x lowest-x) (= y highest-y) (= y lowest-y))))
 
-(defn inc-distance [d frontier]
-  (into {} (for [s frontier] [s (inc d)])))
-
 (defn breadth-first-search
   "Finds (non-lazily for now) all distinct nodes and their distance."
   [start neighbours]
