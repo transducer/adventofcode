@@ -59,6 +59,9 @@
                (merge-with #(min (first %1) (first %2)) distances frontier)))
       distances)))
 
+
+;; Part 1
+
 (->> (reduce
       (fn [acc [coord [dist start]]]
         (if-let [prev-coord (acc coord)]
@@ -79,3 +82,16 @@
      (remove (fn [[_start coords-closest]] (some #(on-edge? %) coords-closest)))
      (map (fn [[_start coords-closest]] (count coords-closest)))
      (apply max))
+
+
+;; Part 2
+
+(->> (map #(breadth-first-search % neighbours-in-grid) coordinates)
+     (apply concat)
+     (group-by first)
+     (vals)
+     (pmap (fn [coord-dist-starts]
+             coord-dist-starts
+             (reduce (fn [acc [x [dist start]]] (+ acc dist)) 0 coord-dist-starts)))
+     (remove (fn [distance] (>= distance 10000)))
+     (count))
