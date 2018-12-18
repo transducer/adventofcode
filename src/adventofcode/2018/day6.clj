@@ -88,7 +88,6 @@
      (group-by first)
      (vals)
      (pmap (fn [coord-dist-starts]
-             coord-dist-starts
              (reduce (fn [acc [x [dist start]]] (+ acc dist)) 0 coord-dist-starts)))
      (remove (fn [distance] (>= distance 10000)))
      (count))
