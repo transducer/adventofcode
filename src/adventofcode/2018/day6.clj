@@ -59,7 +59,9 @@
 
 ;; Part 1
 
-(->> (reduce
+(->> (map #(breadth-first-search % neighbours-in-grid) coordinates)
+     (apply interleave)
+     (reduce
       (fn [acc [coord [dist start]]]
         (if-let [prev-coord (acc coord)]
           (let [[prev-dist prev-start boundary?] prev-coord]
@@ -70,9 +72,7 @@
                   (assoc acc coord [dist start false])
                   :else acc))
           (assoc acc coord [dist start false])))
-      {} ; -> map of coord -> [distance start boundary?]
-      (->> (map #(breadth-first-search % neighbours-in-grid) coordinates)
-           (apply interleave)))
+      {}) ; -> map of coord -> [distance start boundary?]
      (filter (fn [[_coord [_dist _start boundary?]]] (not boundary?)))
      (group-by (fn [[_coord [_dist start _boundary]]] start))
      (map (fn [[start coord->dist-start-boundaries]] [start (keys coord->dist-start-boundaries)]))
