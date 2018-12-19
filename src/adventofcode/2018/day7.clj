@@ -1,5 +1,6 @@
 (ns adventofcode.2018.day7
   (:require [clojure.java.io :as io]
+            [clojure.set :refer [union]]
             [clojure.string :as string]))
 
 (def step->dependencies
@@ -8,37 +9,36 @@
        string/split-lines
        (map #(re-seq #"[A-Z]" (string/replace-first % #"S" "")))
        (group-by second)
-       (map (fn [[k v]] [k (into (sorted-set) (map first v))]))
-       (into (sorted-map))))
+       (map (fn [[k v]] [k (into #{} (map first v))]))
+       (into {})))
 
 (defn available? [step->dependencies step]
   (empty? (step->dependencies step)))
 
-(defn first-step [step->dependencies]
+(defn available-steps-in-deps [step->dependencies]
   (->> (keys step->dependencies)
-       (apply disj (apply clojure.set/union (vals step->dependencies)))
-       first))
+       (apply disj (apply union (vals step->dependencies)))))
 
 (defn execute [step->deps step]
-  (dissoc
-   (->> step->deps
-        (map (fn [[s deps]] [s (disj deps step)]))
-        (into (sorted-map)))
-   step))
+  (->> step->deps
+       (map (fn [[st deps]] [st (disj deps step)]))
+       (into {})
+       (#(dissoc % step))))
 
 
 ;; Part 1
 
-(def start (first-step step->dependencies))
-
-(loop [step->deps (execute step->dependencies start)
-       acc start]
+(defn find-and-do-steps [step->deps acc]
   (if (empty? step->deps)
     acc
-    (if-let [step (->> step->deps
-                    keys
-                    (filter #(available? step->deps %))
-                    first)]
-      (recur (execute step->deps step)
-             (str acc step))
-      acc)))
+    (when-let [steps (->> (keys step->deps)
+                          (filter #(available? step->deps %))
+                          (union (available-steps-in-deps step->deps))
+                          (into (sorted-set)))]
+      (for [step steps]
+        (find-and-do-steps (execute step->deps step)
+                           (str acc step))))))
+
+(first (flatten (find-and-do-steps step->dependencies "")))
+
+;; => CGKMUWXFAIHSYDNLJQTREOPZBV
