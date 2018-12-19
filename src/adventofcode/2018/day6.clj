@@ -59,7 +59,7 @@
 
 ;; Part 1
 
-(->> (map #(breadth-first-search % neighbours-in-grid) coordinates)
+(->> (pmap #(breadth-first-search % neighbours-in-grid) coordinates)
      (apply interleave)
      (reduce
       (fn [acc [coord [dist start]]]
@@ -83,11 +83,11 @@
 
 ;; Part 2
 
-(->> (map #(breadth-first-search % neighbours-in-grid) coordinates)
+(->> (pmap #(breadth-first-search % neighbours-in-grid) coordinates)
      (apply concat)
      (group-by first)
      (vals)
-     (pmap (fn [coord-dist-starts]
-             (reduce (fn [acc [x [dist start]]] (+ acc dist)) 0 coord-dist-starts)))
+     (pmap (fn [coord->dist-starts]
+             (reduce (fn [acc [_coord [dist start]]] (+ acc dist)) 0 coord->dist-starts)))
      (remove (fn [distance] (>= distance 10000)))
      (count))
