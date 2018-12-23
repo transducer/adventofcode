@@ -53,7 +53,7 @@
        set))
 
 (defn to-seconds [step]
-  (- (int (first (char-array step))) 4))
+  (- (int (first step)) 4))
 
 (defn assign-worker [workers step]
   (let [free-worker (->> workers
