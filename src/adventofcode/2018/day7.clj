@@ -95,7 +95,7 @@
         (recur step->deps (pop steps-stack) seconds (assign-worker workers (peek steps-stack)))
         (let [steps (->> (keys step->deps)
                          (filter #(available? step->deps %))
-                         (set)
+                         set
                          (union (available-steps-in-deps step->deps))
                          (#(difference % (steps-in-progress workers)))
                          (into (sorted-set))
