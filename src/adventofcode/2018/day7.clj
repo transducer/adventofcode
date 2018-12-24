@@ -98,9 +98,10 @@
                          (set)
                          (union (available-steps-in-deps step->deps))
                          (#(difference % (steps-in-progress workers)))
-                         (into (sorted-set)))
-              steps-now (vec (take (free-worker-count workers) steps))]
-          (recur step->deps steps-now (inc seconds) (dec-worker-time workers)))))))
+                         (into (sorted-set))
+                         (take (free-worker-count workers))
+                         vec)]
+          (recur step->deps steps (inc seconds) (dec-worker-time workers)))))))
 
 (def workers
   {:w1 {:seconds 0 :step nil}
