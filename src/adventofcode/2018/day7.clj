@@ -65,9 +65,7 @@
 (defn dec-worker-time [workers]
   (->> workers
        (map (fn [[w {:keys [seconds step]}]]
-              (if (zero? seconds)
-                [w {:seconds 0 :step step}]
-                [w {:seconds (dec seconds) :step step}])))
+              [w {:seconds (max 0 (dec seconds)) :step step}]))
        (into {})))
 
 (defn free-worker-count [workers]
