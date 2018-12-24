@@ -102,9 +102,7 @@
                          (#(difference % (steps-in-progress workers)))
                          (into (sorted-set)))
               steps-now (vec (take (free-worker-count workers) steps))]
-          (if (empty? steps-now)
-            (recur step->deps [] (inc seconds) (dec-worker-time workers))
-            (recur step->deps steps-now (inc seconds) (dec-worker-time workers))))))))
+          (recur step->deps steps-now (inc seconds) (dec-worker-time workers)))))))
 
 (def workers
   {:w1 {:seconds 0 :step nil}
