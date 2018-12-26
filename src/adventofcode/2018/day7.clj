@@ -73,8 +73,6 @@
        (filter (fn [[w {:keys [seconds]}]] (zero? seconds)))
        count))
 
-(def counter (atom 0))
-
 (defn execute-finished-steps [step->deps workers]
   (let [finished-workers (->> workers
                               (filter (fn [[w {:keys [seconds step]}]]
