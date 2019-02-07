@@ -48,8 +48,7 @@
 
 (defn steps-in-progress [s]
   (->> (vals s)
-       (map :step)
-       (remove nil?)
+       (keep :step)
        set))
 
 (defn to-seconds [step]
