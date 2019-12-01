@@ -18,10 +18,10 @@
 
 ;; Part 2
 
-(defn fuel* [total m]
-  (if (pos? m)
-    (let [new (max 0 (fuel m))]
-      (recur (+ total new) new))
-    total))
+(defn fuel* [m]
+  (->> (iterate fuel m)
+       (rest)
+       (take-while pos?)
+       (reduce +)))
 
-(transduce (map (partial fuel* 0)) + input)
+(transduce (map fuel*) + input)
