@@ -12,11 +12,8 @@
    2 (fn mult [v a b c] (assoc v c (* (v a) (v b))))
    99 (fn exit [v _a _b _c] (first v))})
 
-
 (defn run [in noun verb]
-  (loop [v (assoc in
-                  1 noun
-                  2 verb)
+  (loop [v (assoc in 1 noun 2 verb)
          i 0]
     (if (vector? v)
       (let [[a b c] (subvec v (inc i))]
@@ -39,10 +36,8 @@
 (->> (for [noun (range 100)
            verb (range 100)]
        {:result (+ (* 100 noun) verb)
-        :verb verb
-        :noun noun
         :output (run input noun verb)})
-     (filter (fn [{:keys [output]}] (= output wanted)))
+     (filter (comp #{wanted} :output))
      first
      :result)
 
