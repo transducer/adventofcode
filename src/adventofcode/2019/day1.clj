@@ -1,4 +1,4 @@
-(ns adventofcode.2018.day1
+(ns adventofcode.2019.day1
   (:require [clojure.java.io :as io]))
 
 (def input
@@ -15,6 +15,8 @@
 
 (transduce (map fuel) + input)
 
+;; => 3349352
+
 
 ;; Part 2
 
@@ -25,3 +27,5 @@
        (reduce +)))
 
 (transduce (map fuel*) + input)
+
+;; =>  5021154
