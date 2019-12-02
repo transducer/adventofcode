@@ -14,9 +14,9 @@
 
 
 (defn run [in noun verb]
-  (loop [v (-> in
-               (assoc 1 noun)
-               (assoc 2 verb))
+  (loop [v (assoc in
+                  1 noun
+                  2 verb)
          i 0]
     (if (vector? v)
       (let [[a b c] (subvec v (inc i))]
