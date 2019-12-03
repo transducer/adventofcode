@@ -53,8 +53,7 @@
   (if (first path)
     (update-in acc [(first path) k]
                (fn [x i]
-                 (cond (nil? x) i
-                       :else x))
+                 (if x x i))
                i)
     acc))
 
