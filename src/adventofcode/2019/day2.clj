@@ -33,12 +33,10 @@
 
 (def wanted 19690720)
 
-(->> (for [noun (range 100)
-           verb (range 100)]
-       {:result (+ (* 100 noun) verb)
-        :output (run input noun verb)})
-     (filter (comp #{wanted} :output))
-     first
-     :result)
+(first
+ (for [noun (range 100)
+       verb (range 100)
+       :when (= (run input noun verb) wanted)]
+   (+ (* 100 noun) verb)))
 
 ;; => 9507
