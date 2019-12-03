@@ -31,7 +31,7 @@
           [[0 0]]
           path))
 
-(defn crosses [path1 path2]
+(defn intersections [path1 path2]
   (->> (concat (distinct path1) (distinct path2))
        frequencies
        (filter (fn [[point cnt]] (> cnt 1)))))
@@ -41,7 +41,7 @@
 
 (->> input
      (map points)
-     (apply crosses)
+     (apply intersections)
      (map (fn [[point]] (apply + point)))
      (filter pos?)
      (apply min))
@@ -57,7 +57,7 @@
                i)
     acc))
 
-(defn crosses* [path1 path2]
+(defn intersections* [path1 path2]
   (loop [acc {}
          path1 path1
          path2 path2
@@ -76,7 +76,7 @@
 
 (->> input
      (map points)
-     (apply crosses*)
+     (apply intersections*)
      (filter (fn [[point {:keys [dist1 dist2]}]]
                (and dist1 dist2)))
      (map (fn [[point {:keys [dist1 dist2]}]]
