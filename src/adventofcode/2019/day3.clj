@@ -3,9 +3,9 @@
             [clojure.string :as string]))
 
 (def input
-  (->> (-> (io/resource "2019/day3.txt")
-           slurp
-           (string/split #"\n"))
+  (->> (io/resource "2019/day3.txt")
+       (io/reader)
+       (line-seq)
        (map #(string/split % #","))))
 
 (def directions
