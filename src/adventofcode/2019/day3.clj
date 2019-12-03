@@ -85,5 +85,4 @@
      (remove zero?)
      (apply min))
 
-
-;; =>
+;; => 12304
