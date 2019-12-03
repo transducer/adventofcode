@@ -27,7 +27,7 @@
   (reduce (fn [acc [dir & ns]]
             (let [step-cnt (Integer/parseInt (apply str ns))]
               (apply conj acc
-                     (steps dir step-cnt (last acc)))))
+                     (steps dir step-cnt (peek acc)))))
           [[0 0]]
           path))
 
