@@ -1,6 +1,7 @@
 (ns adventofcode.2019.day3
   (:require [clojure.java.io :as io]
-            [clojure.string :as string]))
+            [clojure.string :as string]
+            [clojure.set :as set]))
 
 (def input
   (->> (io/resource "2019/day3.txt")
@@ -32,9 +33,7 @@
           path))
 
 (defn intersections [path1 path2]
-  (->> (concat (distinct path1) (distinct path2))
-       frequencies
-       (filter (fn [[point cnt]] (> cnt 1)))))
+  (set/intersection (set path1) (set path2)))
 
 
 ;; Part 1
@@ -42,7 +41,7 @@
 (->> input
      (map points)
      (apply intersections)
-     (map (fn [[point]] (apply + point)))
+     (map (fn [point] (apply + point)))
      (filter pos?)
      (apply min))
 
