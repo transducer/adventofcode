@@ -29,14 +29,11 @@
 
 ;; Part 2
 
-(def distance-ancestor
-  (->> (descendants ::SAN)
-       (set/intersection (descendants ::YOU))
-       (map (comp count descendants))
-       (apply max)))
-
-(+
- (- (count (descendants ::YOU)) distance-ancestor 1)
- (- (count (descendants ::SAN)) distance-ancestor 1))
+(let [ys (descendants ::YOU)
+      ss (descendants ::SAN)]
+  (count
+   (set/difference
+    (set/union ys ss)
+    (set/intersection ys ss))))
 
 ;; => 460
