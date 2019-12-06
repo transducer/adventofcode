@@ -17,16 +17,18 @@
           [a_imm? b_imm?] (->> (drop-last 2 ns)
                                reverse
                                (map (partial = 1)))
-          [a b c] (subvec v (inc i))]
-      (case op
-        1 (recur [(assoc v c (+ (if a_imm? a (v a)) (if b_imm? b (v b)))) out] (+ i 4))
-        2 (recur [(assoc v c (* (if a_imm? a (v a)) (if b_imm? b (v b)))) out] (+ i 4))
-        3 (recur [(assoc v a in) out] (+ i 2))
-        4 (recur [v (conj out (if a_imm? a (v a)))] (+ i 2))
-        5 (recur p (if (zero? (if a_imm? a (v a))) (+ i 3) (if b_imm? b (v b))))
-        6 (recur p (if (zero? (if a_imm? a (v a))) (if b_imm? b (v b)) (+ i 3)))
-        7 (recur [(assoc v c (if (< (if a_imm? a (v a)) (if b_imm? b (v b))) 1 0)) out] (+ i 4))
-        8 (recur [(assoc v c (if (= (if a_imm? a (v a)) (if b_imm? b (v b))) 1 0)) out] (+ i 4))
+          [a' b' c] (subvec v (inc i))
+          a (if a_imm? a' (get v a'))
+          b (if b_imm? b' (get v b'))]
+      (condp = op
+        1 (recur [(assoc v c (+ a b)) out] (+ i 4))
+        2 (recur [(assoc v c (* a b)) out] (+ i 4))
+        3 (recur [(assoc v a' in) out] (+ i 2))
+        4 (recur [v (conj out a)] (+ i 2))
+        5 (recur p (if (zero? a) (+ i 3) b))
+        6 (recur p (if (zero? a) b (+ i 3)))
+        7 (recur [(assoc v c (if (< a b) 1 0)) out] (+ i 4))
+        8 (recur [(assoc v c (if (= a b) 1 0)) out] (+ i 4))
         9 (peek out)))))
 
 
