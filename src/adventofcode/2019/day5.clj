@@ -1,6 +1,6 @@
 (ns adventofcode.2019.day5
-  (:require [clojure.java.io :as io]
-            [adventofcode.2019.day4 :refer [digits]]))
+  (:require [adventofcode.2019.day4 :refer [digits]]
+            [clojure.java.io :as io]))
 
 (def input
   (->> (io/resource "2019/day5.txt")
