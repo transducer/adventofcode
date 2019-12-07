@@ -9,26 +9,26 @@
        read-string))
 
 (defn run [program in]
-  (loop [p [program []]
+  (loop [p program
+         out []
          i 0]
-    (let [[v out :as p] p
-          ns (digits (v i))
+    (let [ns (digits (p i))
           op (last ns)
           [a_imm? b_imm?] (->> (drop-last 2 ns)
                                reverse
                                (map (partial = 1)))
-          [a' b' c] (subvec v (inc i))
-          a (if a_imm? a' (get v a'))
-          b (if b_imm? b' (get v b'))]
+          [a' b' c] (subvec p (inc i))
+          a (if a_imm? a' (get p a'))
+          b (if b_imm? b' (get p b'))]
       (condp = op
-        1 (recur [(assoc v c (+ a b)) out] (+ i 4))
-        2 (recur [(assoc v c (* a b)) out] (+ i 4))
-        3 (recur [(assoc v a' in) out] (+ i 2))
-        4 (recur [v (conj out a)] (+ i 2))
-        5 (recur p (if (zero? a) (+ i 3) b))
-        6 (recur p (if (zero? a) b (+ i 3)))
-        7 (recur [(assoc v c (if (< a b) 1 0)) out] (+ i 4))
-        8 (recur [(assoc v c (if (= a b) 1 0)) out] (+ i 4))
+        1 (recur (assoc p c (+ a b)) out (+ i 4))
+        2 (recur (assoc p c (* a b)) out (+ i 4))
+        3 (recur (assoc p a' in) out (+ i 2))
+        4 (recur p (conj out a) (+ i 2))
+        5 (recur p out (if (zero? a) (+ i 3) b))
+        6 (recur p out (if (zero? a) b (+ i 3)))
+        7 (recur (assoc p c (if (< a b) 1 0)) out (+ i 4))
+        8 (recur (assoc p c (if (= a b) 1 0)) out (+ i 4))
         9 (peek out)))))
 
 
