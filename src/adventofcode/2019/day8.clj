@@ -15,8 +15,7 @@
 ;; Part 1
 
 (->> (map frequencies layers)
-     (sort-by :0)
-     first
+     (apply min-key :0)
      ((juxt :1 :2))
      (apply *))
 
