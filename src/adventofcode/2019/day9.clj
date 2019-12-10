@@ -7,7 +7,7 @@
        slurp
        (format "[%s]")
        read-string
-       (map-indexed (fn [i v] [i v]))
+       (map-indexed vector)
        (into {})))
 
 (defn read-param [p mode base value]
