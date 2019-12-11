@@ -11,8 +11,7 @@
                  [fast-zip "0.7.0"]
                  [org.clojure/spec.alpha "0.2.176"]
                  [org.clojure/test.check "0.10.0"]
-                 [org.clojure/core.async "0.6.532"]
-                 [org.clojure/algo.generic "0.1.2"]]
+                 [org.clojure/core.async "0.6.532"]]
   :main ^:skip-aot adventofcode.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}})
