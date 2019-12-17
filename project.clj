@@ -12,7 +12,8 @@
                  [org.clojure/spec.alpha "0.2.176"]
                  [org.clojure/test.check "0.10.0"]
                  [org.clojure/core.async "0.6.532"]
-                 [org.clojure/math.numeric-tower "0.0.4"]]
+                 [org.clojure/math.numeric-tower "0.0.4"]
+                 [quil "3.1.0"]]
   :main ^:skip-aot adventofcode.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}})

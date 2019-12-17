@@ -47,18 +47,18 @@
         [0 7] (recur (assoc p c (if (< a b) 1 0)) out in base (+ i 4))
         [0 8] (recur (assoc p c (if (= a b) 1 0)) out in base (+ i 4))
         [0 9] (recur p out in (+ base a) (+ i 2))
-        [9 9] (peek out)))))
+        [9 9] out))))
 
 
 ;; Part 1
 
-(run program 1)
+(peek (run program 1))
 
 ;; => 2436480432
 
 
 ;; Part 2
 
-(run program 2)
+(peek (run program 2))
 
 ;; => 45710
