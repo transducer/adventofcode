@@ -15,22 +15,30 @@
 
 (def out (chan 10000))
 (def in (chan))
-(run-async program in out)
+
+(run-async (assoc program 0 2) in out)
 (close! out)
 
 (def outputs (<!! (async/into [] out)))
 
 (spit (io/resource "2019/day13_out.edn") outputs)
 
+(count outputs)
+
 (defn setup []
   (q/background 0)
-  (q/frame-rate 300)
+  (q/frame-rate 6000)
   (q/stroke 255)
   (q/color-mode :hsb)
-  (q/text-font "Courier New" 20)
   outputs)
 
 (defn update-state [outputs]
+  ;; if outputs is empty
+  ;; http://quil.info/api/input/keyboard
+  ;; Then take a key press. Either left (-1), right (+1) or neutral (0)
+  ;; And get enough outputs to fill the screen
+  ;; (count squares) = 3510... Do not count score printing outputs x = -1
+  ;; Otherwise if there are outputs
   (drop 3 outputs))
 
 (defn score? [x y]
@@ -43,9 +51,7 @@
         (prn "Score:" tile-id)
         (condp = tile-id
           1 (q/rect (* C x) (+ (* C y)) C C)
-          2 (do (q/stroke 128)
-                (q/rect (* C x) (+ (* C y)) C C)
-                (q/stroke 255))
+          2 (do (q/stroke 128) (q/rect (* C x) (+ (* C y)) C C) (q/stroke 255))
           3 (q/rect (* C x) (+ (* C y) (/ C 2)) C (/ C 2))
           4 (q/rect (* C x) (+ (* C y)) C C (/ C 2))
           :do-nothing))
