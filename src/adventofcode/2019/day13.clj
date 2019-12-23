@@ -19,7 +19,7 @@
 (def out (chan 10000))
 (def in (chan))
 
-(run-async (assoc program 0 2) in out)
+(run-async program in out)
 (close! out)
 
 (def outputs (<!! (async/into [] out)))
@@ -42,15 +42,13 @@
   (q/background 0)
   (q/frame-rate 60)
   (q/stroke 255)
-  (q/color-mode :hsb)
-  [])
+  (q/color-mode :hsb))
 
 (def prev-ball (atom nil))
 (def x-paddle (atom nil))
 
 (defn update-state [_]
-  (when-let [[x-ball _] @prev-ball]
-    (>!! in (compare x-ball @x-paddle)))
+  (>!! in (compare (first @prev-ball) @x-paddle))
   (loop [outputs []]
     (let [[v _] (alts!! [out (timeout 10)])]
       (if v
@@ -72,13 +70,17 @@
                 (q/stroke 255))
           3 (do (reset! x-paddle x)
                 (q/fill 0)
-                (q/rect 0 230 450 10)
+                (q/stroke 0)
+                (q/rect 10 230 430 10)
+                (q/stroke 255)
                 (q/fill 255)
                 (q/rect (* C x) (- (* C y) (/ C 2)) C (/ C 2)))
           4 (do
               (when-let [[x y] @prev-ball]
                 (q/fill 0)
-                (q/rect (* C x) (+ (* C y)) C C (/ C 2))
+                (q/stroke 0)
+                (q/rect (* C x) (+ (* C y)) (inc C) (inc C) (/ C 2))
+                (q/stroke 255)
                 (q/fill 255))
               (reset! prev-ball [x y])
               (q/rect (* C x) (+ (* C y)) C C (/ C 2)))
