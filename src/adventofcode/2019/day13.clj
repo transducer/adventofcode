@@ -45,17 +45,20 @@
   (q/color-mode :hsb)
   [])
 
+(def prev-ball (atom nil))
+(def x-paddle (atom nil))
+
 (defn update-state [_]
+  (when-let [[x-ball _] @prev-ball]
+    (>!! in (compare x-ball @x-paddle)))
   (loop [outputs []]
-    (let [[v _] (alts!! [out (timeout 100)])]
+    (let [[v _] (alts!! [out (timeout 10)])]
       (if v
         (recur (conj outputs v))
         outputs))))
 
 (defn score? [x y]
   (and (= x -1) (= y 0)))
-
-(def prev-ball (atom nil))
 
 (defn draw-state [outputs]
   (let [C 10]
@@ -67,7 +70,8 @@
           2 (do (q/stroke 128)
                 (q/rect (* C x) (+ (* C y)) C C)
                 (q/stroke 255))
-          3 (do (q/fill 0)
+          3 (do (reset! x-paddle x)
+                (q/fill 0)
                 (q/rect 0 230 450 10)
                 (q/fill 255)
                 (q/rect (* C x) (- (* C y) (/ C 2)) C (/ C 2)))
@@ -80,15 +84,13 @@
               (q/rect (* C x) (+ (* C y)) C C (/ C 2)))
           :do-nothing)))))
 
-(defn key-pressed [_ {:keys [key]}]
-  (>!! in (case key :left -1 :right 1 0)))
-
 (q/defsketch arcade
   :title "Intcode Arcade"
   :size [450 300]
-  :key-pressed key-pressed
   :setup setup
   :draw draw-state
   :update update-state
   :features [:keep-on-top]
   :middleware [m/fun-mode])
+
+;; => 15328
