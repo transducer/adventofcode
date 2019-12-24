@@ -50,7 +50,7 @@
 (defn update-state [_]
   (>!! in (compare (first @prev-ball) @x-paddle))
   (loop [outputs []]
-    (let [[v _] (alts!! [out (timeout 10)])]
+    (let [[v _] (alts!! [out (timeout 20)])]
       (if v
         (recur (conj outputs v))
         outputs))))
