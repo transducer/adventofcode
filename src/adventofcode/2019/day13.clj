@@ -1,17 +1,13 @@
 (ns adventofcode.2019.day13
-  (:require [adventofcode.2019.day11 :refer [run-async]]
+  (:require [adventofcode.2019.intcode :refer [run-async]]
             [clojure.core.async :as async :refer [chan <!! >!! close! timeout alts!!]]
             [clojure.java.io :as io]
+            [clojure.string :as string]
             [quil.core :as q]
             [quil.middleware :as m]))
 
 (def program
-  (->> (io/resource "2019/day13.txt")
-       (slurp)
-       (format "[%s]")
-       (read-string)
-       (map-indexed vector)
-       (into {})))
+  (slurp (io/resource "2019/day13.txt")))
 
 
 ;; Part 1
@@ -36,7 +32,7 @@
 (def out (chan 10000))
 (def in (chan))
 
-(run-async (assoc program 0 2) in out)
+(run-async (string/replace-first program "1" "2") in out)
 
 (defn setup []
   (q/background 0)
