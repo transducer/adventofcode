@@ -2,10 +2,9 @@
   (:require
    [adventofcode.2019.intcode :refer [run-async]]
    [clojure.core.async :as async :refer [chan >!! timeout alts!!]]
-   [clojure.data.priority-map :refer [priority-map]]
    [clojure.java.io :as io]
    [clojure.set :as set]
-   [medley.core :refer [filter-vals remove-vals remove-keys map-vals]]))
+   [medley.core :refer [filter-vals remove-vals]]))
 
 (def program
   (slurp (io/resource "2019/day15.txt")))
@@ -30,14 +29,12 @@
    1 :correct-direction
    2 :oxygen-system})
 
+(def timeout-ms 10)
+
 (def in (chan))
 (def out (chan))
-(run-async program in out)
 
-;; DFS to find the oxygen system.
-;; Keep track of the map so we know location of walls. Walls and visited nodes
-;; do not have to be checked again. Once target is reached (status 2) use
-;; Dijkstra to find the shortest route.
+(run-async program in out)
 
 (defn neighbours [visited walls loc]
   ;; Check every direction and create a hash map of location to type
@@ -46,11 +43,11 @@
                (let [new-loc (mapv + loc move)]
                  (when-not (contains? (set/union visited walls) new-loc)
                    [new-loc (let [_ (>!! in command)
-                                  [v _] (alts!! [out (timeout 20)])
+                                  [v _] (alts!! [out (timeout timeout-ms)])
                                   status (status-codes v)]
                               (when-not (= status :wall)
                                 (>!! in (opposite-movement-commands command))
-                                (alts!! [out (timeout 20)]))
+                                (alts!! [out (timeout timeout-ms)]))
                               status)]))))
        (into {})))
 
@@ -68,19 +65,19 @@
         (if-let [command (movements-commands direction)]
           (do
             (>!! in command)
-            (alts!! [out (timeout 20)])
+            (alts!! [out (timeout timeout-ms)])
             (conj path new-loc))
           ;; Otherwise backtrack robot to new location first
           (let [prev-loc (peek (pop path))
                 direction (mapv - prev-loc curr-loc)
                 command (movements-commands direction)]
             (>!! in command)
-            (alts!! [out (timeout 20)])
+            (alts!! [out (timeout timeout-ms)])
             (recur prev-loc (pop path))))))))
 
 (defn depth-first-walk
-  "Walk the robot through the grid and explore using DFS.
-  Returns a vector of `[location-of-oxygen-system visited-nodes]`."
+  "Walk the robot through the grid using DFS. Returns the distance to
+  the oxygen system."
   []
   (loop [loc [0 0]
          path []
@@ -88,8 +85,8 @@
          visited #{}
          walls #{}
          frontier (neighbours visited walls loc)] ; {[2 2] :wall, ...}
-    (if-let [target (ffirst (filter-vals #{:oxygen-system} frontier))]
-      [target (conj visited target)]
+    (if (seq (filter-vals #{:oxygen-system} frontier))
+      (count path)
       (when-let [new-loc (peek q)]
         (let [new-path (walk loc new-loc path)
               new-visited (conj visited new-loc)
@@ -100,35 +97,6 @@
                                   (set/union new-visited new-walls)))]
           (recur new-loc new-path new-q new-visited new-walls new-frontier))))))
 
-(defn dijkstra
-  "Computes single-source shortest path distance in a directed graph.
-
-  Given a node n, (f n) should return a map with the successors of n as keys and
-  their (non-negative) distance from n as vals.
-
-  Returns distance to target or nil if no path."
-  [start target f]
-  (loop [q (priority-map start 0), r {}]
-    (when-let [[v d] (peek q)]
-      (if (= v target) d
-          (let [dists (->> (f v)
-                           (remove-keys r)
-                           (map-vals (partial + d)))]
-            (recur (merge-with min (pop q) dists)
-                   (assoc r v d)))))))
-
-(let [[target nodes] (depth-first-walk)
-      successors (fn [loc]
-                   (let [neighbours (set/intersection
-                                     (set
-                                      (for [dir [[0 1] [0 -1] [1 0] [-1 0]]]
-                                        (mapv + dir loc)))
-                                     nodes)
-                         distance 1]
-                     (into {} (for [n neighbours] [n distance]))))]
-  (dijkstra [0 0] target successors))
+(depth-first-walk)
 
 ;; => 380
-
-
-;; Part 2
