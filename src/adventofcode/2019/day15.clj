@@ -1,10 +1,10 @@
 (ns adventofcode.2019.day15
-  (:require
-   [adventofcode.2019.intcode :refer [run-async]]
-   [clojure.core.async :as async :refer [chan >!! timeout alts!!]]
-   [clojure.java.io :as io]
-   [clojure.set :as set]
-   [medley.core :refer [filter-vals remove-vals]]))
+  (:require [adventofcode.2019.intcode :refer [run-async]]
+            [clojure.core.async :as async :refer [chan >!! timeout alts!!]]
+            [clojure.data.priority-map :refer [priority-map]]
+            [clojure.java.io :as io]
+            [clojure.set :as set]
+            [medley.core :refer [filter-vals remove-vals remove-keys map-vals]]))
 
 (def program
   (slurp (io/resource "2019/day15.txt")))
@@ -13,21 +13,13 @@
 ;; Part 1
 
 (def movements-commands
-  {[0 1] 1
-   [0 -1] 2
-   [-1 0] 3
-   [1 0] 4})
+  {[0 1] 1, [0 -1] 2, [-1 0] 3, [1 0] 4})
 
 (def opposite-movement-commands
-  {1 2
-   2 1
-   3 4
-   4 3})
+  {1 2, 2 1, 3 4, 4 3})
 
 (def status-codes
-  {0 :wall
-   1 :correct-direction
-   2 :oxygen-system})
+  {0 :wall, 1 :correct-direction, 2 :oxygen-system})
 
 (def timeout-ms 10)
 
@@ -36,67 +28,131 @@
 
 (run-async program in out)
 
-(defn neighbours [visited walls loc]
-  ;; Check every direction and create a hash map of location to type
+(defn get-neighbours!
+  "Walks the robot to every direction that's not a wall or already visited.
+  Returns a hash map of the new nodes to status code type"
+  [visited walls node]
   (->> movements-commands
        (keep (fn [[move command]]
-               (let [new-loc (mapv + loc move)]
-                 (when-not (contains? (set/union visited walls) new-loc)
-                   [new-loc (let [_ (>!! in command)
-                                  [v _] (alts!! [out (timeout timeout-ms)])
-                                  status (status-codes v)]
-                              (when-not (= status :wall)
-                                (>!! in (opposite-movement-commands command))
-                                (alts!! [out (timeout timeout-ms)]))
-                              status)]))))
+               (let [new-node (mapv + node move)]
+                 (when-not (contains? (set/union visited walls) new-node)
+                   [new-node (let [_ (>!! in command)
+                                   [v _] (alts!! [out (timeout timeout-ms)])
+                                   status (status-codes v)]
+                               (when-not (= status :wall)
+                                 (>!! in (opposite-movement-commands command))
+                                 (alts!! [out (timeout timeout-ms)]))
+                               status)]))))
        (into {})))
 
-(defn walk
-  "Walks robot to `new-loc`, backtracking if needed.
-  Returns new path"
-  [loc new-loc path]
-  (loop [curr-loc loc
+(defn walk!
+  "Walks robot to `new-node`, backtracking if needed. Returns new path vector."
+  [node new-node path]
+  (loop [curr-node node
          path path]
-    (let [direction (mapv - new-loc curr-loc)]
+    (let [direction (mapv - new-node curr-node)]
       ;; Initial point [0 0]...
-      (if (= new-loc loc)
-        (conj path new-loc)
+      (if (= new-node node)
+        (conj path new-node)
         ;; If one step away move there
         (if-let [command (movements-commands direction)]
           (do
             (>!! in command)
             (alts!! [out (timeout timeout-ms)])
-            (conj path new-loc))
-          ;; Otherwise backtrack robot to new location first
-          (let [prev-loc (peek (pop path))
-                direction (mapv - prev-loc curr-loc)
+            (conj path new-node))
+          ;; Otherwise backtrack robot to new node first
+          (let [prev-node (peek (pop path))
+                direction (mapv - prev-node curr-node)
                 command (movements-commands direction)]
             (>!! in command)
             (alts!! [out (timeout timeout-ms)])
-            (recur prev-loc (pop path))))))))
+            (recur prev-node (pop path))))))))
 
 (defn depth-first-walk
-  "Walk the robot through the grid using DFS. Returns the distance to
-  the oxygen system."
+  "Walk the robot through the grid using DFS. Returns distance to oxygen system."
   []
-  (loop [loc [0 0]
+  (loop [node [0 0]
          path []
-         q [loc]
+         q [node]
          visited #{}
          walls #{}
-         frontier (neighbours visited walls loc)] ; {[2 2] :wall, ...}
+         frontier (get-neighbours! visited walls node)] ; {[2 2] :wall, ...}
     (if (seq (filter-vals #{:oxygen-system} frontier))
       (count path)
-      (when-let [new-loc (peek q)]
-        (let [new-path (walk loc new-loc path)
-              new-visited (conj visited new-loc)
-              new-frontier (neighbours walls new-visited new-loc)
+      (when-let [new-node (peek q)]
+        (let [new-path (walk! node new-node path)
+              new-visited (conj visited new-node)
+              new-frontier (get-neighbours! walls new-visited new-node)
               new-walls (apply conj walls (keys (filter-vals #{:wall} new-frontier)))
               new-q (apply conj (pop q)
                            (apply disj (set (keys (remove-vals #{:wall} new-frontier)))
                                   (set/union new-visited new-walls)))]
-          (recur new-loc new-path new-q new-visited new-walls new-frontier))))))
+          (recur new-node new-path new-q new-visited new-walls new-frontier))))))
 
 (depth-first-walk)
 
 ;; => 380
+
+
+;; Part 2
+
+(defn depth-first-explore
+  "Walks the robot through the grid using DFS till every node is visited.
+
+  Returns a map of the grid with nodes as keys and its status code
+  type (`:wall`,`:correct-direction`, `:oxygen-system`) as values."
+  []
+  (loop [node [0 0]
+         path []
+         q [node]
+         m {}
+         visited #{}
+         walls #{}
+         frontier (get-neighbours! visited walls node)]
+    (if-let [new-node (peek q)]
+      (let [new-path (walk! node new-node path)
+            new-visited (conj visited new-node)
+            new-frontier (get-neighbours! walls new-visited new-node)
+            new-walls (apply conj walls (keys (filter-vals #{:wall} new-frontier)))
+            new-map (merge m frontier)
+            new-q (apply conj (pop q)
+                         (apply disj (set (keys (remove-vals #{:wall} new-frontier)))
+                                (set/union new-visited new-walls)))]
+        (recur new-node new-path new-q new-map new-visited new-walls new-frontier))
+      m)))
+
+(defn dijkstra
+  "Computes single-source path distances in a directed graph.
+
+  Given a node `n`, `(f n)` should return a map with the successors of `n` as keys and
+  their (non-negative) distance from `n` as vals.
+
+  Returns map with nodes as keys and their distance to `start` as vals."
+  [start f]
+  (loop [q (priority-map start 0), dists {}]
+    (if-let [[n d] (peek q)]
+      (recur (merge-with min (pop q) (->> (f n)
+                                          (remove-keys dists)
+                                          (map-vals (partial + d))))
+             (assoc dists n d))
+      dists)))
+
+(def grid (depth-first-explore))
+
+(defn successors [node]
+  (let [adjacent-nodes (set (for [move (keys movements-commands)] (mapv + node move)))
+        valid-nodes (->> grid (filter-vals #{:correct-direction}) keys set)
+        neighbours (set/intersection adjacent-nodes valid-nodes)
+        distance 1]
+    (into {} (for [n neighbours] [n distance]))))
+
+(def oxygen-system-node
+  (ffirst (filter-vals #{:oxygen-system} grid)))
+
+(def distances vals)
+
+(->> (dijkstra oxygen-system-node successors)
+     distances
+     (apply max))
+
+;; => 410
