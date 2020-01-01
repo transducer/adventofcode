@@ -24,20 +24,21 @@
 (def transpose
   (partial apply mapv vector))
 
-(defn scaffold? [i e]
-  (let [row (grid (int (/ i width)))
-        col ((transpose grid) (mod i width))
-        top (get col (dec (int (/ i width))) \X)
-        bottom (get col (inc (int (/ i width))) \X)
-        left (get row (dec (mod i width)) \X)
-        right (get row (inc (mod i width)) \X)]
+(defn scaffold? [[x y] e]
+  (let [row (grid y)
+        col ((transpose grid) x)
+        left (get row (dec x))
+        right (get row (inc x))
+        top (get col (dec y))
+        bottom (get col (inc y))]
     (every? #{\#} [e top bottom left right])))
 
 (def scaffold-intersections
   (keep-indexed
    (fn [i e]
-     (when (scaffold? i e)
-       [(mod i width) (int (/ i width))]))
+     (let [[x y] [(mod i width) (int (/ i width))]]
+       (when (scaffold? [x y] e)
+         [x y])))
    (apply str grid)))
 
 (reduce (fn [acc [x y]] (+ acc (* x y))) 0 scaffold-intersections)
