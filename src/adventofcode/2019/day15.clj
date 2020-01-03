@@ -139,9 +139,11 @@
 
 (def grid (depth-first-explore))
 
+(def valid-nodes
+  (->> grid (filter-vals #{:correct-direction}) keys set))
+
 (defn successors [node]
   (let [adjacent-nodes (set (for [move (keys movements-commands)] (mapv + node move)))
-        valid-nodes (->> grid (filter-vals #{:correct-direction}) keys set)
         neighbours (set/intersection adjacent-nodes valid-nodes)
         distance 1]
     (into {} (for [n neighbours] [n distance]))))
