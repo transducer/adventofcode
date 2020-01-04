@@ -45,3 +45,10 @@
 (reduce (fn [acc [x y]] (+ acc (* x y))) 0 intersections)
 
 ;; => 3920
+
+
+;; Part 2
+
+;; Naive path of going straight always (by hand):
+
+"R8L4R4R10R8R8L4R4R10R8L12L12R8R8R10R4R4L12L12R8R8R10R4R4L12L12R8R8R10R4R4R10R4R4R8L4R4R10R8"
