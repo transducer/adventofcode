@@ -24,7 +24,7 @@
 (def transpose
   (partial apply mapv vector))
 
-(defn scaffold? [[x y] e]
+(defn intersection? [x y e]
   (let [row (grid y)
         col ((transpose grid) x)
         left (get row (dec x))
@@ -33,14 +33,15 @@
         bottom (get col (inc y))]
     (every? #{\#} [e top bottom left right])))
 
-(def scaffold-intersections
+(def intersections
   (keep-indexed
    (fn [i e]
-     (let [[x y] [(mod i width) (int (/ i width))]]
-       (when (scaffold? [x y] e)
+     (let [x (mod i width)
+           y (int (/ i width))]
+       (when (intersection? x y e)
          [x y])))
    (apply str grid)))
 
-(reduce (fn [acc [x y]] (+ acc (* x y))) 0 scaffold-intersections)
+(reduce (fn [acc [x y]] (+ acc (* x y))) 0 intersections)
 
 ;; => 3920
