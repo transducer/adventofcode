@@ -59,8 +59,6 @@
    "B" "L12L12R8R8"
    "C" "R10R4R4"})
 
-(reduce-kv (fn [s k v] (string/replace s v k)) path replacements)
-
 (def main-routine
   (->> replacements
        (reduce-kv (fn [s k v] (string/replace s v k)) path)
@@ -68,20 +66,23 @@
        (map int)
        vec))
 
+(defn to-int [v]
+  (if (= (count v) 2)
+    [(int (first v)) (int (second v))]
+    [(int (first v))]))
+
 (defn ascii-seq [path]
   (->> path
        (re-seq #"([L|R])(\d+)")
        (mapcat rest)
        (interpose ",")
-       (map (comp int first))))
-
-(int \10)
+       (mapcat to-int)))
 
 (def functions
   (mapv ascii-seq (vals replacements)))
 
 (def video-feed-input
-  [(int \y) (int \newline)])
+  [(int \n) (int \newline)])
 
 (def inputs
   (->> (conj functions video-feed-input)
@@ -89,10 +90,6 @@
        (interpose [(int \newline)])
        (apply concat)))
 
-(->> inputs
-     (apply run (string/replace-first program "1" "2"))
-     (map char)
-     (apply str)
-     string/split-lines
-     (map println)
-     dorun)
+(peek (apply run (string/replace-first program "1" "2") inputs))
+
+;; => 673996
