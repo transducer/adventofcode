@@ -6,24 +6,24 @@
 (def program
   (slurp (io/resource "2019/day11.txt")))
 
-(def directions
+(def directions-moves
   {:up [0 1]
    :right [1 0]
    :down [0 -1]
    :left [-1 0]})
 
 (defn left [point dir]
-  (let [dirs (keys directions)
+  (let [dirs (keys directions-moves)
         idx (dec (.indexOf dirs dir))
         new-dir (nth dirs (if (neg? idx) (dec (count dirs)) idx))
-        new-point (mapv + point (get directions new-dir))]
+        new-point (mapv + point (get directions-moves new-dir))]
     [new-point new-dir]))
 
 (defn right [point dir]
-  (let [dirs (keys directions)
+  (let [dirs (keys directions-moves)
         idx (inc (.indexOf dirs dir))
         new-dir (nth dirs (if (= idx (count dirs)) 0 idx))
-        new-point (mapv + point (get directions new-dir))]
+        new-point (mapv + point (get directions-moves new-dir))]
     [new-point new-dir]))
 
 
