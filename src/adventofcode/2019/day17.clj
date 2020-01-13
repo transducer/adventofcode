@@ -49,6 +49,50 @@
 
 ;; Part 2
 
-;; Naive path of going straight always (by hand):
+;; Naive path of going straight always (by hand)
+(def path
+  "R8L4R4R10R8R8L4R4R10R8L12L12R8R8R10R4R4L12L12R8R8R10R4R4L12L12R8R8R10R4R4R10R4R4R8L4R4R10R8")
 
-"R8L4R4R10R8R8L4R4R10R8L12L12R8R8R10R4R4L12L12R8R8R10R4R4L12L12R8R8R10R4R4R10R4R4R8L4R4R10R8"
+;; Common parts (by hand)
+(def replacements
+  {"A" "R8L4R4R10R8"
+   "B" "L12L12R8R8"
+   "C" "R10R4R4"})
+
+(reduce-kv (fn [s k v] (string/replace s v k)) path replacements)
+
+(def main-routine
+  (->> replacements
+       (reduce-kv (fn [s k v] (string/replace s v k)) path)
+       (interpose \,)
+       (map int)
+       vec))
+
+(defn ascii-seq [path]
+  (->> path
+       (re-seq #"([L|R])(\d+)")
+       (mapcat rest)
+       (interpose ",")
+       (map (comp int first))))
+
+(int \10)
+
+(def functions
+  (mapv ascii-seq (vals replacements)))
+
+(def video-feed-input
+  [(int \y) (int \newline)])
+
+(def inputs
+  (->> (conj functions video-feed-input)
+       (into [main-routine])
+       (interpose [(int \newline)])
+       (apply concat)))
+
+(->> inputs
+     (apply run (string/replace-first program "1" "2"))
+     (map char)
+     (apply str)
+     string/split-lines
+     (map println)
+     dorun)
