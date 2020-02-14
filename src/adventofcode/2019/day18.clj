@@ -1,6 +1,7 @@
 (ns adventofcode.2019.day18
   (:require [clojure.data.priority-map :refer [priority-map]]
             [clojure.java.io :as io]
+            [clojure.set :as set]
             [clojure.string :as string]
             [medley.core :refer [map-vals remove-keys]]))
 
@@ -20,7 +21,9 @@
   (count (re-seq keys-regex input)))
 
 (def start
-  (string/index-of (string/replace input "\n" "") \@))
+  (-> input
+      (string/replace "\n" "")
+      (string/index-of \@)))
 
 (def maze
   (-> input
@@ -45,33 +48,84 @@
 
 (defn adjacent
   "Finds neighbours of point index `point-idx` given available keys
-  `picked-up-keys`. Returns a map of `[idx available keys]` to distance."
-  [point-idx picked-up-keys]
-  (let [above (- point-idx width)
-        left (if (zero? (mod (dec point-idx) width)) -1 (dec point-idx))
+  `picked-up-keys`. Returns a map of `[idx available-keys]` to distance."
+  [maze point-idx picked-up-keys]
+  (let [out-of-bounds -1
+        above (- point-idx width)
+        left (if (zero? (mod (dec point-idx) width)) out-of-bounds (dec point-idx))
         below (+ point-idx width)
-        right (if (zero? (mod point-idx width)) -1 (inc point-idx))]
+        right (if (zero? (mod point-idx width)) out-of-bounds (inc point-idx))]
     (->> [above left below right]
          (filter (partial can-visit? picked-up-keys))
          (keep (fn [i]
-                 (let [node (get maze i)]
+                 (let [node (get maze i)
+                       distance 1]
                    (if (key? node)
-                     [[i (conj picked-up-keys node)] 1]
-                     [[i picked-up-keys] 1]))))
+                     [[i (conj picked-up-keys node)] distance]
+                     [[i picked-up-keys] distance]))))
          (into {}))))
 
-(defn dijkstra [start]
-  (loop [q (priority-map [start #{}] 0), dists {}]
-    (when-let [[[idx picked-up-keys] d] (peek q)]
-      (if (= (count picked-up-keys) total-keys-count)
-        d
-        (recur (merge-with min (pop q) (->> (adjacent idx picked-up-keys)
-                                            (remove-keys dists)
-                                            (map-vals (partial + d))))
-               (assoc dists [idx picked-up-keys] d))))))
+(defn dijkstra
+  ([start initial-keys]
+   (loop [q (priority-map [start initial-keys] 0), dists {}]
+     (when-let [[[idx picked-up-keys] d] (peek q)]
+       (if (= (count picked-up-keys) total-keys-count)
+         d
+         (recur (merge-with min (pop q) (->> (adjacent maze idx picked-up-keys)
+                                             (remove-keys dists)
+                                             (map-vals (partial + d))))
+                (assoc dists [idx picked-up-keys] d)))))))
 
 
 ;; Part 1
 
-(dijkstra start)
+(dijkstra start #{})
 ;; => 6162
+
+
+;; Part 2
+
+(def closed-maze
+  (->> maze
+       (map-indexed
+        (fn [i c]
+          (condp = i
+            start \#
+            (+ start width) \#
+            (- start width) \#
+            (dec start) \#
+            (inc start) \#
+            c)))
+       (apply str)))
+
+(defn quadrant [idx]
+  (let [upper? (< (quot idx width) (int (/ height 2)))
+        left? (< (mod idx width) (int (/ width 2)))]
+    (cond (and upper? left?) 0
+          upper? 1
+          (and (not upper?) left?) 2
+          :else 3)))
+
+(def quadrant-keys
+  "Map of quadrant (0, 1, 2, 3) to set of keys in it"
+  (reduce-kv
+   (fn [acc idx e]
+     (if (key? e)
+       (update acc (quadrant idx) #((fnil conj #{}) % e))
+       acc))
+   {}
+   (vec closed-maze)))
+
+(def starts
+  [(- (dec start) width)
+   (- (inc start) width)
+   (+ (dec start) width)
+   (+ (inc start) width)])
+
+(->> (for [quadrant (range 4)
+           :let [initial-keys (apply set/union (vals (dissoc quadrant-keys quadrant)))
+                 start (nth starts quadrant)]]
+       (dijkstra start initial-keys))
+     (reduce +))
+
+;; => 1556
