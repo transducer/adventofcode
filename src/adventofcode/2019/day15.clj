@@ -1,10 +1,10 @@
 (ns adventofcode.2019.day15
   (:require [adventofcode.2019.intcode :refer [run-async]]
+            [adventofcode.2019.util :refer [dijkstra]]
             [clojure.core.async :as async :refer [chan >!! timeout alts!!]]
-            [clojure.data.priority-map :refer [priority-map]]
             [clojure.java.io :as io]
             [clojure.set :as set]
-            [medley.core :refer [filter-vals remove-vals remove-keys map-vals]]))
+            [medley.core :refer [filter-vals remove-vals]]))
 
 (def program
   (slurp (io/resource "2019/day15.txt")))
@@ -120,22 +120,6 @@
                                 (set/union new-visited new-walls)))]
         (recur new-node new-path new-q new-map new-visited new-walls new-frontier))
       m)))
-
-(defn dijkstra
-  "Computes single-source path distances in a directed graph.
-
-  Given a node `n`, `(f n)` should return a map with the successors of `n` as keys and
-  their (non-negative) distance from `n` as vals.
-
-  Returns map with nodes as keys and their distance to `start` as vals."
-  [start f]
-  (loop [q (priority-map start 0), dists {}]
-    (if-let [[n d] (peek q)]
-      (recur (merge-with min (pop q) (->> (f n)
-                                          (remove-keys dists)
-                                          (map-vals (partial + d))))
-             (assoc dists n d))
-      dists)))
 
 (def grid (depth-first-explore))
 
