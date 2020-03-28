@@ -1,8 +1,7 @@
 (ns adventofcode.2019.day20
-  (:require [clojure.data.priority-map :refer [priority-map]]
+  (:require [adventofcode.2019.util :refer [dijkstra]]
             [clojure.java.io :as io]
-            [clojure.string :as string]
-            [medley.core :refer [remove-keys map-vals]]))
+            [clojure.string :as string]))
 
 (def input
   (-> "2019/day20.txt" io/resource slurp))
@@ -54,7 +53,7 @@
        ffirst))
 
 (def start
-  (find-idx "AA"))
+  (+ (find-idx "AA") width))
 
 (def finish
   (- (find-idx "ZZ") width))
@@ -69,6 +68,9 @@
                  [[idx-a idx-b] [idx-b idx-a]]))
        (into {})))
 
+
+;; Part 1
+
 (defn adjacent
   "Finds neighbours of point index `point-idx` given available
   `portals`. Returns a map of `idx` to `distance`."
@@ -78,18 +80,8 @@
     (into {} (concat (map (fn [i] [i 1]) visitable)
                      (map (fn [i] [i 0]) (keep portals neighbours))))))
 
-(defn dijkstra
-  "Computes single-source path distances in a directed graph.
-
-  Given a node `n`, `(f n)` should return a map with the successors of `n` as keys and
-  their (non-negative) distance from `n` as vals.
-
-  Returns map with nodes as keys and their distance to `start` as vals."
-  [start f]
-  (loop [q (priority-map start -1), dists {}]
-    (if-let [[n d] (peek q)]
-      (recur (merge-with min (pop q) (map-vals (partial + d) (remove-keys dists (f n))))
-             (assoc dists n d))
-      dists)))
-
 (get (dijkstra start adjacent) finish)
+
+;; => 696
+
+
