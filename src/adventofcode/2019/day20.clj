@@ -1,5 +1,5 @@
 (ns adventofcode.2019.day20
-  (:require [adventofcode.2019.util :refer [dijkstra]]
+  (:require [adventofcode.2019.util :refer [dijkstra dijkstra-distance]]
             [clojure.java.io :as io]
             [clojure.string :as string]))
 
@@ -85,3 +85,28 @@
 ;; => 696
 
 
+;; Part 2
+
+(defn inner-donut? [i]
+  (and
+   (< 4 (mod i width) 107)
+   (< 4 (quot i width) 107)))
+
+(def max-depth
+  (/ (count portals) 2))
+
+(defn recursive-adjacent [[level idx]]
+  (let [neighbours (neighbour-idxs idx)
+        visitable (filter path? neighbours)]
+    (into {} (concat (for [i visitable]
+                       [[level i] 1])
+                     (for [i (keep portals neighbours)]
+                       (if (inner-donut? idx)
+                         (when (< level max-depth)
+                           [[(inc level) i] 0])
+                         (when (pos? level)
+                           [[(dec level) i] 0])))))))
+
+(dijkstra-distance [0 start] [0 finish] recursive-adjacent)
+
+;; => 7538
