@@ -77,8 +77,8 @@
   [idx]
   (let [neighbours (neighbour-idxs idx)
         visitable (filter path? neighbours)]
-    (into {} (concat (map (fn [i] [i 1]) visitable)
-                     (map (fn [i] [i 0]) (keep portals neighbours))))))
+    (into {} (concat (for [i visitable] [i 1])
+                     (for [i (keep portals neighbours)] [i 0])))))
 
 (get (dijkstra start adjacent) finish)
 
