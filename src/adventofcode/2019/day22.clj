@@ -1,6 +1,9 @@
 (ns adventofcode.2019.day22
-  (:require [clojure.java.io :as io]))
+  (:require
+   [clojure.java.io :as io]))
 
+(def lines
+  (line-seq (io/reader "resources/2019/day22.txt")))
 
 ;; Part 1
 
@@ -45,10 +48,45 @@
         "new" (deal-into-new-stack deck)
         "increment" (deal deck (Integer/parseInt n)))))
   factory-order-deck
-  (line-seq (io/reader "resources/2019/day22.txt")))
+  lines)
  2019)
 
 ;; => 4096
 
 
 ;; Part 2
+
+;;; Used https://www.reddit.com/r/adventofcode/comments/ee0rqi/2019_day_22_solutions/
+
+(def m
+  (biginteger 119315717514047))
+
+(def n
+  (biginteger 101741582076661))
+
+(def pos
+  2020)
+
+(def shuffles
+  {"cut" (fn [x m a b] [(mod (* a x) m) (mod (* b x) m)])
+   "new" (fn [_ m a b] [(mod (- a) m) (mod (- m 1 b) m)])
+   "increment" (fn [x m a b] [a (mod (- b x) m)])})
+
+(defn arithmetico-geometric [lines]
+  (reduce
+   (fn [[a b] line]
+     (let [op (re-find #"cut|new|increment" line)
+           n (Integer/parseInt (or (re-find #"-*\d+" line) "0"))
+           f (shuffles op)]
+       (f n m a b)))
+   [1 0]
+   lines))
+
+(defn mod-pow [b e m]
+  (.modPow (biginteger b) (biginteger e) (biginteger m)))
+
+(let [[a b] (arithmetico-geometric lines)
+      r (mod (* b (mod-pow (- 1 b) (- m 2) m)) m)]
+  (mod (* (- pos r) (+ (mod-pow a (* n (- m 2)) m) r)) m))
+
+;; => 78613970589919
