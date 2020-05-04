@@ -48,20 +48,17 @@
 ;; Part 1
 
 (defn first-duplicate [coll]
-  (last
-   (reductions
-    (fn [seen item]
-      (if (seen item)
-        (reduced item)
-        (conj seen item)))
-    #{}
-    coll)))
+  (reduce
+   (fn [seen item]
+     (if (seen item)
+       (reduced item)
+       (conj seen item)))
+   #{}
+   coll))
 
 (defn neighbours [[x y]]
   (for [[i j] [[1 0] [-1 0] [0 1] [0 -1]]]
     [(+ x i) (+ y j)]))
-
-(update-tiles neighbours grid)
 
 (->> (iterate (partial update-tiles neighbours) grid)
      first-duplicate
