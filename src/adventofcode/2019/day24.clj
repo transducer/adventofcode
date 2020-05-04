@@ -42,18 +42,21 @@
 (defn update-tiles [grid]
   (mapv (partial update-tile grid) (range 25)))
 
+(defn first-duplicate [coll]
+  (last
+   (reductions
+    (fn [seen item]
+      (if (seen item)
+        (reduced item)
+        (conj seen item)))
+    #{}
+    coll)))
+
 
 ;; Part 1
 
-(biodiversity-rating
- (last
-  (reductions
-   (fn [seen grid]
-     (prn "1")
-     (if (seen grid)
-       (reduced grid)
-       (conj seen grid)))
-   #{}
-   (iterate update-tiles grid))))
+(->> (iterate update-tiles grid)
+     first-duplicate
+     biodiversity-rating)
 
 ;; => 17863711
