@@ -6,3 +6,5 @@
 
 Inputs in `resources` directory.
 Solutions in `src` directory.
+
+![AoC](resources/aoc.gif)
