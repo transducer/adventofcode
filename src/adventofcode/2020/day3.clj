@@ -5,20 +5,11 @@
 (def grid
   (string/split-lines (slurp "resources/2020/day3.txt")))
 
-(defn get-point [[x y]]
-  (when-let [row (get grid y)]
-    (nth (cycle row) x)))
-
-(defn neighbour [[offset-x offset-y :as _slope] [x y :as _point]]
-  [(+ x offset-x) (+ y offset-y)])
-
-(def height
-  (count grid))
-
-(defn count-trees [slope]
-  (->> (iterate (partial neighbour slope) slope)
-       (take height)
-       (filter (comp #{\#} get-point))
+(defn count-trees [[dx dy :as _slope]]
+  (->> (map (fn [row x] (nth (cycle row) x))
+            (take-nth dy grid)
+            (iterate (partial + dx) 0))
+       (filter #{\#})
        count))
 
 
