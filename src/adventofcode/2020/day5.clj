@@ -5,26 +5,13 @@
 (def input
   (string/split-lines (slurp "resources/2020/day5.txt")))
 
-(defn binary-slice [pred high chars]
-  (loop [v (vec (range high))
-         [c & _ :as cs] chars]
-    (if c
-      (recur
-       (if (pred c)
-         (subvec v 0 (Math/ceil (/ (count v) 2)))
-         (subvec v (/ (count v) 2) (count v)))
-       (next cs))
-      (first v))))
-
-(defn row [chars]
-  (binary-slice #{\F} 128 chars))
-
-(defn column [chars]
-  (binary-slice #{\L} 8 chars))
+(defn binary-slice [chars]
+  (-> (reduce (fn [acc c] (str acc (if (#{\F \L} c) 0 1))) "" chars)
+      (Integer/parseInt 2)))
 
 (defn seat-id [boarding-pass]
-  (+ (* 8 (row (take 7 boarding-pass)))
-     (column (drop 7 boarding-pass))))
+  (+ (* 8 (binary-slice (take 7 boarding-pass)))
+     (binary-slice (drop 7 boarding-pass))))
 
 (def seat-ids
   (map seat-id input))
