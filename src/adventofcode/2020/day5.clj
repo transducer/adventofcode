@@ -10,8 +10,7 @@
       (Integer/parseInt 2)))
 
 (defn seat-id [boarding-pass]
-  (+ (* 8 (binary-slice (take 7 boarding-pass)))
-     (binary-slice (drop 7 boarding-pass))))
+  (binary-slice boarding-pass))
 
 (def seat-ids
   (map seat-id input))
