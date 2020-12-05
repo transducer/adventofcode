@@ -6,7 +6,7 @@
   (string/split-lines (slurp "resources/2020/day5.txt")))
 
 (defn seat-id [boarding-pass]
-  (-> (reduce (fn [acc c] (str acc (if (#{\F \L} c) 0 1))) "" boarding-pass)
+  (-> (string/escape boarding-pass {\F 0 \B 1 \L 0 \R 1})
       (Integer/parseInt 2)))
 
 (def seat-ids
