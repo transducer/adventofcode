@@ -5,12 +5,9 @@
 (def input
   (string/split-lines (slurp "resources/2020/day5.txt")))
 
-(defn binary-slice [chars]
-  (-> (reduce (fn [acc c] (str acc (if (#{\F \L} c) 0 1))) "" chars)
-      (Integer/parseInt 2)))
-
 (defn seat-id [boarding-pass]
-  (binary-slice boarding-pass))
+  (-> (reduce (fn [acc c] (str acc (if (#{\F \L} c) 0 1))) "" boarding-pass)
+      (Integer/parseInt 2)))
 
 (def seat-ids
   (map seat-id input))
