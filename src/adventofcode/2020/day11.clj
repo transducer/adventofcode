@@ -86,3 +86,42 @@
      (filter #{\#})
      count)
 ;; => 2234
+
+
+;;; Visualization
+
+(require '[quil.core :as q] '[quil.middleware :as m])
+
+(def C 5)
+
+(defn draw [state]
+  (doseq [x (range width)
+          y (range height)
+          :let [value (get state [x y])]]
+    (condp = value
+      \. (do (q/stroke 255)
+             (q/fill 255)
+             (q/rect (* C x) (+ (* C y)) C C))
+      \# (do (q/fill 128)
+             (q/stroke 128)
+             (q/rect (* C x) (+ (* C y)) C C))
+      \L (do (q/fill 0)
+             (q/stroke 0)
+             (q/rect (* C x) (- (* C y) (/ C 2)) C (/ C 2)))
+      :do-nothing)))
+
+(defn setup []
+  (q/background 0)
+  (q/frame-rate 240)
+  (q/stroke 255)
+  (q/color-mode :hsb)
+  grid)
+
+(q/defsketch seats
+  :title "Seats"
+  :size [(* C width) (* C height)]
+  :setup setup
+  :draw draw
+  :update new-state
+  :features [:keep-on-top]
+  :middleware [m/fun-mode])
