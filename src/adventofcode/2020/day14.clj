@@ -6,10 +6,13 @@
   (string/split-lines (slurp "resources/2020/day14.txt")))
 
 (defn bit-masks [s]
-  {:on (-> (string/escape s {\X 0 \1 1 \0 0})
+  {:on (-> (string/replace s "X" "0")
            (Long/parseLong 2))
-   :off (-> (string/escape s {\X 1 \1 1 \0 0})
+   :off (-> (string/replace s "X" "1")
             (Long/parseLong 2))})
+
+(defn sum-memory [output]
+  (->> output :mem vals (apply +)))
 
 (->> program
      (reduce
@@ -23,31 +26,18 @@
                            (bit-and off))))))
       {:mem {}
        :masks {}})
-     :mem
-     vals
-     (apply +))
+     sum-memory)
 ;; => 10885823581193
 
-(defn on-masks [mask binary]
-  (condp = (first mask)
-    nil [binary]
-    \X (concat (on-masks (rest mask) (str binary 0))
-               (on-masks (rest mask) (str binary 1)))
-    (on-masks (rest mask) (str binary 0))))
+(defn masks [mask-type mask binary]
+  (if-let [c (first mask)]
+    (if (= c \X)
+      (mapcat #(masks mask-type (rest mask) (str binary %)) [0 1])
+      (masks mask-type (rest mask) (str binary (case mask-type :on 0 :off 1))))
+    [binary]))
 
-(defn off-masks [mask binary]
-  (condp = (first mask)
-    nil [binary]
-    \X (concat (off-masks (rest mask) (str binary 0))
-               (off-masks (rest mask) (str binary 1)))
-    (off-masks (rest mask) (str binary 1))))
-
-(defn main-mask [mask binary]
-  (condp = (first mask)
-    nil binary
-    \X (recur (rest mask) (str binary 0))
-    \1 (recur (rest mask) (str binary 1))
-    \0 (recur (rest mask) (str binary 0))))
+(defn main-mask [mask]
+  (string/replace mask "X" "0"))
 
 (defn addresses [address mask]
   (map
@@ -56,9 +46,9 @@
          (bit-or (Long/parseLong on-mask 2))
          (bit-and (Long/parseLong off-mask 2))
          (bit-or (Long/parseLong main-mask 2))))
-   (on-masks mask "")
-   (off-masks mask "")
-   (repeat (main-mask mask ""))))
+   (masks :on mask "")
+   (masks :off mask "")
+   (repeat (main-mask mask))))
 
 (->> program
      (reduce
@@ -72,7 +62,5 @@
              (addresses address mask)))))
       {:mem {}
        :mask {}})
-     :mem
-     vals
-     (apply +))
+     sum-memory)
 ;; => 3816594901962
