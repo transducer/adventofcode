@@ -30,26 +30,24 @@
 
 (defn on-masks [mask binary]
   (condp = (first mask)
-    nil binary
-    \X [(on-masks (rest mask) (str binary 0))
-        (on-masks (rest mask) (str binary 1))]
-    \1 (on-masks (rest mask) (str binary 0))
-    \0 (on-masks (rest mask) (str binary 0))))
+    nil [binary]
+    \X (concat (on-masks (rest mask) (str binary 0))
+               (on-masks (rest mask) (str binary 1)))
+    (on-masks (rest mask) (str binary 0))))
 
 (defn off-masks [mask binary]
   (condp = (first mask)
-    nil binary
-    \X [(off-masks (rest mask) (str binary 0))
-        (off-masks (rest mask) (str binary 1))]
-    \1 (off-masks (rest mask) (str binary 1))
-    \0 (off-masks (rest mask) (str binary 1))))
+    nil [binary]
+    \X (concat (off-masks (rest mask) (str binary 0))
+               (off-masks (rest mask) (str binary 1)))
+    (off-masks (rest mask) (str binary 1))))
 
 (defn main-mask [mask binary]
   (condp = (first mask)
     nil binary
-    \X (main-mask (rest mask) (str binary 0))
-    \1 (main-mask (rest mask) (str binary 1))
-    \0 (main-mask (rest mask) (str binary 0))))
+    \X (recur (rest mask) (str binary 0))
+    \1 (recur (rest mask) (str binary 1))
+    \0 (recur (rest mask) (str binary 0))))
 
 (defn addresses [address mask]
   (map
@@ -58,8 +56,8 @@
          (bit-or (Long/parseLong on-mask 2))
          (bit-and (Long/parseLong off-mask 2))
          (bit-or (Long/parseLong main-mask 2))))
-   (flatten (on-masks mask ""))
-   (flatten (off-masks mask ""))
+   (on-masks mask "")
+   (off-masks mask "")
    (repeat (main-mask mask ""))))
 
 (->> program
