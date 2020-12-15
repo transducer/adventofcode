@@ -4,8 +4,8 @@
   (read-string (format "[%s]" (slurp "resources/2020/day15.txt"))))
 
 (defn nth-number-spoken [n]
-  (loop [seen (into {} (map-indexed (fn [i item] [item [(inc i)]]) input))
-         last-spoken (last input)
+  (loop [seen (zipmap input (map vector (rest (range))))
+         last-spoken (peek input)
          i (inc (count input))]
     (if (= i (inc n))
       last-spoken
