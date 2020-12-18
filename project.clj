@@ -14,7 +14,9 @@
                  [org.clojure/core.async "1.3.610"]
                  [org.clojure/math.numeric-tower "0.0.4"]
                  [quil "3.1.0"]
-                 [medley "1.3.0"]]
+                 [medley "1.3.0"]
+                 #_[org.clojure/core.logic "1.0.0"]
+                 [instaparse "1.4.10"]]
   :main ^:skip-aot adventofcode.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}})
