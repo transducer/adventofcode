@@ -50,3 +50,6 @@
  0
  input)
 ;; => 283729053022731
+
+;;; Visualization
+(insta/visualize (arithmetic-parser2 "1 + (2 * 3) + (4 * (5 + 6))"))
