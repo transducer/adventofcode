@@ -1,5 +1,6 @@
 (ns adventofcode.2019.intcode
-  (:require [clojure.core.async :refer [go-loop <! >!]]))
+  (:require
+   [clojure.core.async :refer [go-loop <! >!]]))
 
 (defn- digits [num]
   (loop [n num

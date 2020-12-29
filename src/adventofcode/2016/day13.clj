@@ -1,7 +1,9 @@
 (ns adventofcode.2016.day13
-  (:require [clojure.data.priority-map :refer [priority-map]]))
+  (:require
+   [clojure.data.priority-map :refer [priority-map]]))
 
-(def input 1352)
+(def input
+  1352)
 
 (defn open? [[x y]]
   (and
@@ -12,7 +14,6 @@
         (filter #(= % \1))
         count
         even?)))
-
 
 ;; Dijkstra adjusted from http://www.ummels.de/2014/06/08/dijkstra-in-clojure/
 
@@ -36,7 +37,6 @@
           (let [dists (->> (f v) (remove-keys r) (map-vals (partial + d)))]
             (recur (merge-with min (pop q) dists) (assoc r v d)))))))
 
-
 (defn add-weights [positions]
   (into {} (for [p positions] [p 1])))
 
@@ -52,14 +52,8 @@
        (filter open?)
        add-weights))
 
-
-;; Part 1
-
 (dijkstra [1 1] [31 39] successors)
 ;; => 90
-
-
-;; Part 2
 
 (defn neighbors [[x y]]
   (->> [x y]

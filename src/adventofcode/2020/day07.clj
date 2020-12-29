@@ -27,19 +27,12 @@
                 :when (contains-bag? bag-type rule)]
             (find-bags (:bag-type rule)))})
 
-
-;; Part 1
-
 (->> (tree-seq seq :paths (find-bags "shiny gold"))
      (keep :bag-type)
      set
      count
      dec)
-
 ;; => 205
-
-
-;; Part 2
 
 (defn get-rule [bag-type]
   (first (filter (comp #{bag-type} :bag-type) rules)))
@@ -48,5 +41,4 @@
   (* amount (apply + 1 (->> bag-type get-rule :contents (map bags-count)))))
 
 (dec (bags-count {:bag-type "shiny gold" :amount 1}))
-
 ;; => 80902

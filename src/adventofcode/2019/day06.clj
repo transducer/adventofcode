@@ -1,7 +1,8 @@
 (ns adventofcode.2019.day06
-  (:require [clojure.java.io :as io]
-            [clojure.set :as set]
-            [clojure.string :as string]))
+  (:require
+   [clojure.java.io :as io]
+   [clojure.set :as set]
+   [clojure.string :as string]))
 
 (def input
   (->> (-> (io/resource "2019/day06.txt")
@@ -19,15 +20,8 @@
 
 (add-orbits input)
 
-
-;; Part 1
-
 (count-orbits (set input))
-
 ;; => 273985
-
-
-;; Part 2
 
 (let [ys (descendants ::YOU)
       ss (descendants ::SAN)]
@@ -35,5 +29,4 @@
    (set/difference
     (set/union ys ss)
     (set/intersection ys ss))))
-
 ;; => 460

@@ -5,18 +5,11 @@
 (def program
   (slurp (io/resource "2019/day19.txt")))
 
-
-;; Part 1
-
 (->> (for [x (range 50)
            y (range 50)]
        (peek (run program x y)))
      (reduce +))
-
 ;; => 141
-
-
-;; Part 2
 
 ;; Exploratory
 
@@ -63,5 +56,4 @@
     (if (= 1 (peek (run program (+ x 99) (- y 99))))
       (+ (* 10000 x) (- y 99))
       (recur x (inc y)))))
-
 ;; => 15641348

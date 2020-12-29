@@ -1,12 +1,10 @@
 (ns adventofcode.2018.day05
-  (:require [clojure.java.io :as io]
-            [clojure.string :as string]))
+  (:require
+   [clojure.java.io :as io]
+   [clojure.string :as string]))
 
 (def input
   (-> "2018/day05.txt" io/resource slurp string/trim-newline))
-
-
-;; Part 1
 
 (defn index-of-match
   "Returns index of first match, or -1 if not found."
@@ -34,9 +32,7 @@
       (recur (remove-polarity-at-index polymer i)))))
 
 (length-after-reaction input)
-
-
-;; Part 2
+;; => 9116
 
 (def patterns
   (->> (range 65 91)
@@ -45,3 +41,4 @@
 (->> (map #(string/replace input % "") patterns)
      (map length-after-reaction)
      (apply min))
+;; => 6890

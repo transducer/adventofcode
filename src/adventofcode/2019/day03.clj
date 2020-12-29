@@ -1,7 +1,8 @@
 (ns adventofcode.2019.day03
-  (:require [clojure.java.io :as io]
-            [clojure.string :as string]
-            [clojure.set :as set]))
+  (:require
+   [clojure.java.io :as io]
+   [clojure.string :as string]
+   [clojure.set :as set]))
 
 (def input
   (->> (io/resource "2019/day03.txt")
@@ -35,18 +36,13 @@
 (defn intersections [path1 path2]
   (set/intersection (set path1) (set path2)))
 
-
-;; Part 1
-
 (->> input
      (map points)
      (apply intersections)
      (map (fn [point] (apply + point)))
      (filter pos?)
      (apply min))
-
 ;; => 258
-
 
 (defn update-distance [acc k path i]
   (if (first path)
@@ -70,17 +66,13 @@
              (inc i))
       acc)))
 
-
-;; Part 2
-
 (->> input
      (map points)
      (apply intersections*)
-     (filter (fn [[point {:keys [dist1 dist2]}]]
+     (filter (fn [[_point {:keys [dist1 dist2]}]]
                (and dist1 dist2)))
-     (map (fn [[point {:keys [dist1 dist2]}]]
+     (map (fn [[_point {:keys [dist1 dist2]}]]
             (+ dist1 dist2)))
      (remove zero?)
      (apply min))
-
 ;; => 12304

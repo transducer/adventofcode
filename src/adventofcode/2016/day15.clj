@@ -1,5 +1,6 @@
 (ns adventofcode.2016.day15
-  (:require [clojure.java.io :as io]))
+  (:require
+   [clojure.java.io :as io]))
 
 (def input (-> "2016/day15.txt" io/resource io/reader line-seq))
 
@@ -20,24 +21,17 @@
 (defn true-indices [bools]
   (keep-indexed #(when %2 %1) bools))
 
-
-;; Part 1
-
 (->> time-range
      (map (partial goes-through? discs))
      true-indices
      first)
-
 ;; => 376777
 
-
-;; Part 2
-
-(def new-disc '(11 0))
+(def new-disc
+  '(11 0))
 
 (->> time-range
      (map (partial goes-through? (conj discs new-disc)))
      true-indices
      first)
-
 ;; => 3903937

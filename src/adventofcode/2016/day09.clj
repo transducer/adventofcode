@@ -1,12 +1,13 @@
 (ns adventofcode.2016.day09
-  (:require [clojure.string :as str]))
+  (:require
+   [clojure.string :as string]))
 
 (def input
   (slurp "resources/2016/day09.txt"))
 
 (defn parse
   [d]
-  (str/trim-newline d))
+  (string/trim-newline d))
 
 (def instruction-regex #"\((\d+)x(\d+)\)")
 
@@ -43,13 +44,13 @@
 (defn decompress
   [parsed-input instructions]
   (:decompressed
-   (reduce #(let [shift      (:index-shift %1)
+   (reduce #(let [shift (:index-shift %1)
                   ins-length (inc (- (:instruction-end %2) (:instruction-start %2)))
-                  begin      (inc (:instruction-end %2))
-                  end        (inc (:end-index %2))
-                  n          (dec (:n %2)) ; because the original substring remains
-                  length     (:length %2)
-                  addition   (apply str (repeat n (subs parsed-input begin end)))]
+                  begin (inc (:instruction-end %2))
+                  end (inc (:end-index %2))
+                  n (dec (:n %2)) ; because the original substring remains
+                  length (:length %2)
+                  addition (apply str (repeat n (subs parsed-input begin end)))]
               (-> %1
                   (update :index-shift  (fn [shift] (+ shift (* n length) (- ins-length))))
                   (update :decompressed (fn [d] (str (subs d 0 (+ begin shift (- ins-length)))
@@ -58,44 +59,37 @@
            {:index-shift 0, :decompressed parsed-input}
            instructions)))
 
-
-;; Part 1
-
-(def parsed-input (parse input))
+(def parsed-input
+  (parse input))
 
 (->> parsed-input
      instructions
      non-neutralized
      (decompress parsed-input)
      count)
+;; => 98135
 
-
-;; Part 2
-
-(def starts-with-instruction-regex #"^(\((\d+)x(\d+)\)).*")
+(def starts-with-instruction-regex
+  #"^(\((\d+)x(\d+)\)).*")
 
 (defn expand-and-count
   [d acc]
   (let [[match group n i] (re-matches starts-with-instruction-regex d)]
-    (cond match
-          (let [n (Integer/parseInt n)
-                i (Integer/parseInt i)]
-            (+ (* (expand-and-count (->> d
-                                         (drop (count group))
-                                         (take n)
-                                         (apply str))
-                                    0)
-                  i)
-               (expand-and-count (->> d
-                                      (drop (+ n (count group)))
-                                      (apply str))
-                                 0)
-               acc))
-
-          (not-empty d)
-          (recur (apply str (rest d)) (inc acc))
-
-          :else
-          acc)))
+    (cond match (let [n (Integer/parseInt n)
+                      i (Integer/parseInt i)]
+                  (+ (* (expand-and-count (->> d
+                                               (drop (count group))
+                                               (take n)
+                                               (apply str))
+                                          0)
+                        i)
+                     (expand-and-count (->> d
+                                            (drop (+ n (count group)))
+                                            (apply str))
+                                       0)
+                     acc))
+          (not-empty d) (recur (apply str (rest d)) (inc acc))
+          :else acc)))
 
 (expand-and-count parsed-input 0)
+;; => 10964557606

@@ -1,12 +1,13 @@
 (ns adventofcode.2016.day02
-  (:require [clojure.string :as str]))
+  (:require
+   [clojure.string :as string]))
 
 (def input
   (slurp "resources/2016/day02.txt"))
 
 (defn parse
   [data]
-  (str/split-lines data))
+  (string/split-lines data))
 
 (defn rows
   [keypad]
@@ -67,9 +68,6 @@
                [5 ""])
        second))
 
-
-;; Part 1
-
 (def keypad
   [[1 2 3]
    [4 5 6]
@@ -78,11 +76,9 @@
 (->> input
      parse
      (code keypad))
+;; => "78293"
 
-
-;; Part 2
-
-(def keypad
+(def keypad2
   [[nil nil 1  nil nil]
    [nil 2   3  4   nil]
    [5   6   7  8   9  ]
@@ -91,4 +87,5 @@
 
 (->> input
      parse
-     (code keypad))
+     (code keypad2))
+;; => "AC8C8"

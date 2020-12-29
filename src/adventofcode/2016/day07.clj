@@ -1,6 +1,6 @@
 (ns adventofcode.2016.day07
-  (:require [clojure.java.io :as io]
-            [clojure.string :as str]))
+  (:require
+   [clojure.java.io :as io]))
 
 (def input
   (-> "2016/day07.txt" io/resource io/reader line-seq))
@@ -29,16 +29,11 @@
   (and (some abba? inside)
        (not (some abba? outside))))
 
-
-;; Part 1
-
 (->> input
      parse
      (filter tls?)
      count)
-
-
-;; Part 2
+;; => 115
 
 (defn candidates
   [s]
@@ -59,3 +54,4 @@
      parse
      (filter ssl?)
      count)
+;; => 231

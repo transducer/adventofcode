@@ -1,12 +1,10 @@
 (ns adventofcode.2019.day23
-  (:require [adventofcode.2019.intcode :refer [run-async]]
-            [clojure.core.async :as async :refer [chan alts!! <!! >!! timeout sliding-buffer]]))
+  (:require
+   [adventofcode.2019.intcode :refer [run-async]]
+   [clojure.core.async :as async :refer [chan alts!! <!! >!! timeout sliding-buffer]]))
 
 (def program
   (slurp "resources/2019/day23.txt"))
-
-
-;; Part 1
 
 (def n-computers 50)
 
@@ -37,14 +35,9 @@
               (>!! in y)
               (recur (mod (inc sending-address) (dec n-computers))))))
       (recur (mod (inc sending-address) (dec n-computers))))))
-
 ;; => 22877
 
-
-;; Part 2
-
 (def address-zero-previous-y (atom nil))
-
 (def nat-address 255)
 (def nat (chan (sliding-buffer 2)))
 
@@ -79,5 +72,4 @@
                   (>!! in x)
                   (>!! in y)))
         (recur (mod (inc sending-address) (dec n-computers)) 0 false)))))
-
 ;; => 15210

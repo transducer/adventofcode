@@ -5,8 +5,6 @@
 (def lines
   (line-seq (io/reader "resources/2019/day22.txt")))
 
-;; Part 1
-
 (def factory-order-deck
   (vec (range 10007)))
 
@@ -50,11 +48,7 @@
   factory-order-deck
   lines)
  2019)
-
 ;; => 4096
-
-
-;; Part 2
 
 ;;; Used https://www.reddit.com/r/adventofcode/comments/ee0rqi/2019_day_22_solutions/
 
@@ -88,5 +82,4 @@
 (let [[a b] (arithmetico-geometric lines)
       r (mod (* b (mod-pow (- 1 b) (- m 2) m)) m)]
   (mod (* (- pos r) (+ (mod-pow a (* n (- m 2)) m) r)) m))
-
 ;; => 78613970589919

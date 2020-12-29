@@ -1,7 +1,8 @@
 (ns adventofcode.2019.day20
-  (:require [adventofcode.2019.util :refer [dijkstra dijkstra-distance]]
-            [clojure.java.io :as io]
-            [clojure.string :as string]))
+  (:require
+   [adventofcode.2019.util :refer [dijkstra dijkstra-distance]]
+   [clojure.java.io :as io]
+   [clojure.string :as string]))
 
 (def input
   (-> "2019/day20.txt" io/resource slurp))
@@ -68,9 +69,6 @@
                  [[idx-a idx-b] [idx-b idx-a]]))
        (into {})))
 
-
-;; Part 1
-
 (defn adjacent
   "Finds neighbours of point index `point-idx` given available
   `portals`. Returns a map of `idx` to `distance`."
@@ -81,11 +79,7 @@
                      (for [i (keep portals neighbours)] [i 0])))))
 
 (get (dijkstra start adjacent) finish)
-
 ;; => 696
-
-
-;; Part 2
 
 (defn inner-donut? [i]
   (and
@@ -108,5 +102,4 @@
                            [[(dec level) i] 0])))))))
 
 (dijkstra-distance [0 start] [0 finish] recursive-adjacent)
-
 ;; => 7538

@@ -24,15 +24,8 @@
       (recur xs (* 10 base) (+ n (* base x)))
       n)))
 
-
-;; Part 1
-
 (number (take 8 (nth (iterate fft input) 100)))
-
 ;; => 82435530
-
-
-;; Part 2
 
 (def offset
   (number (take 7 input)))
@@ -58,5 +51,4 @@
        reverse
        (take 8)
        number))
-
 ;; => 83036156

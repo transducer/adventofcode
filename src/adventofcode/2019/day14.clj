@@ -50,15 +50,8 @@
             (recur (dissoc required x) stash (+ used n))))
         used))))
 
-
-;; Part 1
-
 (find-ore-amount 1)
-
 ;; => 628586
-
-
-;; Part 2
 
 (defn bisect [f target]
   (loop [a 1, b 1e9]
@@ -70,5 +63,4 @@
       (dec a))))
 
 (bisect find-ore-amount 1e12)
-
 ;; => 3209254

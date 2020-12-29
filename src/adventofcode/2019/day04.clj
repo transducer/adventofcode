@@ -1,5 +1,6 @@
 (ns adventofcode.2019.day04
-  (:require [clojure.string :as string]))
+  (:require
+   [clojure.string :as string]))
 
 (def input
   "109165-576723")
@@ -26,15 +27,8 @@
     (and (apply <= ns)
          (some (fn [[a b]] (= a b)) parts))))
 
-
-;; Part 1
-
 (count (filter password? numbers))
-
 ;; => 2814
-
-
-;; Part 2
 
 (defn password?* [n]
   (let [ns (digits n)]
@@ -45,5 +39,4 @@
               (some (partial = 2))))))
 
 (count (filter password?* numbers))
-
 ;; => 1991

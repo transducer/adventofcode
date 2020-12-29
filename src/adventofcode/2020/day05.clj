@@ -12,15 +12,8 @@
 (def seat-ids
   (map seat-id input))
 
-
-;; Part 1
-
 (apply max seat-ids)
-
 ;; => 911
-
-
-;; Part 2
 
 (->> seat-ids
      sort
@@ -28,5 +21,4 @@
      (filter (fn [[a b]] (not= (inc a) b)))
      ffirst
      inc)
-
 ;; => 629

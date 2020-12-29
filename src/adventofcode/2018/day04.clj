@@ -1,6 +1,7 @@
 (ns adventofcode.2018.day04
-  (:require [adventofcode.2018.day03 :refer [inc-indices]]
-            [clojure.java.io :as io]))
+  (:require
+   [adventofcode.2018.day03 :refer [inc-indices]]
+   [clojure.java.io :as io]))
 
 (def input
   (-> "2018/day04.txt" io/resource io/reader line-seq))
@@ -18,9 +19,6 @@
        (partition-by #(= (:type %) "Guard"))
        (partition 2)
        (map flatten)))
-
-
-;; Part 1
 
 (def guard->sleep-mask
   (->> (parse input)
@@ -45,9 +43,7 @@
                           (apply + (get guard->sleep-mask k1)))))
         guard->sleep-mask))]
   (* guard-number (.indexOf sleep-mask (apply max sleep-mask))))
-
-
-;; Part 2
+;; => 73646
 
 (let [[guard-number sleep-mask]
       (first
@@ -58,3 +54,4 @@
                           (apply max (get guard->sleep-mask k1)))))
         guard->sleep-mask))]
   (* guard-number (.indexOf sleep-mask (apply max sleep-mask))))
+;; => 4727

@@ -1,7 +1,8 @@
 (ns adventofcode.2018.day07
-  (:require [clojure.java.io :as io]
-            [clojure.set :refer [difference union]]
-            [clojure.string :as string]))
+  (:require
+   [clojure.java.io :as io]
+   [clojure.set :refer [difference union]]
+   [clojure.string :as string]))
 
 (def step->dependencies
   (->> (io/resource "2018/day07.txt")
@@ -25,9 +26,6 @@
        (into {})
        (#(dissoc % step))))
 
-
-;; Part 1
-
 (defn find-and-do-steps [step->deps acc]
   (if (empty? step->deps)
     acc
@@ -40,11 +38,7 @@
                            (str acc step))))))
 
 (first (flatten (find-and-do-steps step->dependencies "")))
-
 ;; => CGKMUWXFAIHSYDNLJQTREOPZBV
-
-
-;; Part 2
 
 (defn steps-in-progress [s]
   (->> (vals s)
@@ -56,7 +50,7 @@
 
 (defn assign-worker [workers step]
   (let [free-worker (->> workers
-                         (filter (fn [[w {:keys [seconds step]}]]
+                         (filter (fn [[_w {:keys [seconds _step]}]]
                                    (zero? seconds)))
                          ffirst)]
     (assoc workers free-worker {:seconds (dec (to-seconds step)) :step step})))
@@ -69,15 +63,15 @@
 
 (defn free-worker-count [workers]
   (->> workers
-       (filter (fn [[w {:keys [seconds]}]] (zero? seconds)))
+       (filter (fn [[_w {:keys [seconds]}]] (zero? seconds)))
        count))
 
 (defn execute-finished-steps [step->deps workers]
   (let [finished-workers (->> workers
-                              (filter (fn [[w {:keys [seconds step]}]]
+                              (filter (fn [[_w {:keys [seconds step]}]]
                                         (and (zero? seconds) step))))
         finished-steps (->> finished-workers
-                            (map (fn [[k {:keys [step]}]] step)))]
+                            (map (fn [[_k {:keys [step]}]] step)))]
     (reduce
      (fn [s->d step]
        (execute s->d step))
@@ -108,5 +102,4 @@
    :w5 {:seconds 0 :step nil}})
 
 (find-and-do-steps-with-workers step->dependencies [] 0 workers)
-
 ;; => 1046

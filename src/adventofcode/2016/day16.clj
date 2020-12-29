@@ -1,8 +1,10 @@
 (ns adventofcode.2016.day16)
 
-(def input "10010000000110000")
+(def input
+  "10010000000110000")
 
-(def parse (partial map char))
+(def parse
+  (partial map char))
 
 (defn toggle [c]
   (if (= c \1) \0 \1))
@@ -25,12 +27,5 @@
         (apply str cs)
         (recur (checksum cs))))))
 
-
-;; Part 1
-
 (solve (parse input) 272) ; => "10010110010011110"
-
-
-;; Part 2
-
 (solve (parse input) 35651584) ; => "01101011101100011"

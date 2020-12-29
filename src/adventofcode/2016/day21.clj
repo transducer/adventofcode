@@ -1,7 +1,9 @@
 (ns adventofcode.2016.day21
-  (:require [clojure.java.io :as io]
-            [clojure.string :as str]
-            [clojure.math.combinatorics :refer [permutations]]))
+  (:refer-clojure :exclude [reverse])
+  (:require
+   [clojure.java.io :as io]
+   [clojure.string :as str]
+   [clojure.math.combinatorics :refer [permutations]]))
 
 (def password "abcdefgh")
 (def input (-> "2016/day21.txt" io/resource io/reader line-seq))
@@ -9,7 +11,8 @@
 (defn parse [d]
   (map #(str/split % #"\s") d))
 
-(def instructions (parse input))
+(def instructions
+  (parse input))
 
 (defn rotate
   "Rotate string `s` `n` times in direction `dir` (\"left\" or \"right\")."
@@ -62,28 +65,20 @@
 (defn execute [pw [cmd & args]]
   (case cmd
     "reverse" (reverse pw (Integer/parseInt (nth args 1)) (Integer/parseInt (nth args 3)))
-    "rotate"  (if (= (nth args 0) "based")
-                (rotate-on-pos pw (nth args 5))
-                (rotate pw (Integer/parseInt (nth args 1)) (nth args 0)))
-    "swap"    (if (= (nth args 0) "letter")
-                (swap-letter pw (nth args 1) (nth args 4))
-                (swap-pos pw (Integer/parseInt (nth args 1)) (Integer/parseInt (nth args 4))))
-    "move"    (move pw (Integer/parseInt (nth args 1)) (Integer/parseInt (nth args 4)))))
-
-
-;; Part 1
+    "rotate" (if (= (nth args 0) "based")
+               (rotate-on-pos pw (nth args 5))
+               (rotate pw (Integer/parseInt (nth args 1)) (nth args 0)))
+    "swap" (if (= (nth args 0) "letter")
+             (swap-letter pw (nth args 1) (nth args 4))
+             (swap-pos pw (Integer/parseInt (nth args 1)) (Integer/parseInt (nth args 4))))
+    "move" (move pw (Integer/parseInt (nth args 1)) (Integer/parseInt (nth args 4)))))
 
 (reduce execute password instructions)
-
 ;; => "gfdhebac"
-
-
-;; Part 2
 
 (->> (permutations password)
      (map (fn [chs] (apply str chs)))
      (map #(vector % (reduce execute % instructions)))
-     (filter (fn [[input pw]] (= pw "fbgdceah")))
+     (filter (fn [[_input pw]] (= pw "fbgdceah")))
      ffirst)
-
 ;; => "dhaegfbc"

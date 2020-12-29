@@ -1,11 +1,9 @@
 (ns adventofcode.2016.day05
-  (:require [digest :refer [md5]]))
+  (:require
+   [digest :refer [md5]]))
 
 (def input
   "reyedfim")
-
-
-;; Part 1
 
 (->> input
      repeat
@@ -14,9 +12,6 @@
      (take 8)
      (map #(subs % 5 6))
      (apply str))
-
-
-;; Part 2
 
 (->> input
      repeat

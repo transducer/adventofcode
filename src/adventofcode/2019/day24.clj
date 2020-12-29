@@ -41,11 +41,8 @@
       (if (infested? neighbours-fn grid pos) bug empty-tile))))
 
 (defn update-tiles [neighbours-fn grid]
-  (->> (for [[k v] grid] [k (update-tile neighbours-fn grid k)])
+  (->> (for [[k _v] grid] [k (update-tile neighbours-fn grid k)])
        (into {})))
-
-
-;; Part 1
 
 (defn first-duplicate [coll]
   (reduce
@@ -63,13 +60,9 @@
 (->> (iterate (partial update-tiles neighbours) grid)
      first-duplicate
      biodiversity-rating)
-
 ;; => 17863711
 
-
-;; Part 2
-
-(defn middle? [[x y z]]
+(defn middle? [[x y _z]]
   (= [x y] [2 2]))
 
 (defn recursive-neighbours [[x y z]]
@@ -109,5 +102,4 @@
   (if (> i 200)
     (bug-count g)
     (recur (inc i) (update-recursive-grid g i))))
-
 ;; => 1937

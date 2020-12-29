@@ -1,5 +1,6 @@
 (ns adventofcode.2019.day10
-  (:require [clojure.string :as string]))
+  (:require
+   [clojure.string :as string]))
 
 (def input
   (string/split-lines (slurp "resources/2019/day10.txt")))
@@ -22,14 +23,8 @@
        count))
 
 
-;; Part 1
-
 (apply max (map visible-count asteroids))
-
 ;; => 276
-
-
-;; Part 2
 
 (def atan2->nearest-asteroids
   (let [[x y :as _point] [17 22]]
@@ -51,5 +46,4 @@
                 (nth (- 199 count-after-minus-half-pi))
                 val)]
   (+ (* 100 x) y))
-
 ;; => 1321

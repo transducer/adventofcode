@@ -1,7 +1,7 @@
-(ns adventofcode.2016.day14
-  (:require [digest :refer [md5]]))
+(ns adventofcode.2016.day14)
 
-(def input "yjdafjpo")
+(def input
+  "yjdafjpo")
 
 (defn hashes
   "Lazy seq of MD5 applied n times on combination of salt and index.
@@ -9,7 +9,7 @@
   ([salt]
    (hashes 1 salt))
   ([n salt]
-   (m-hashes n salt)))
+   (hashes n salt)))
 
 (defn first-three-in-a-row
   "Returns [match letter]."
@@ -26,16 +26,13 @@
 (defn index-and-pad-key?
   "Returns lazy seq of [index pad-key?]"
   [hashes]
-  (map-indexed #(if-let [[match letter] (first-three-in-a-row %2)]
+  (map-indexed #(if-let [[_match letter] (first-three-in-a-row %2)]
                   (let [next-1000 (->> hashes
                                        (drop (inc %1))
                                        (take 1000))]
                     [%1 (five-in-a-row? letter next-1000)])
                   [%1 false])
                hashes))
-
-
-;; Part 1
 
 (->> input
      hashes
@@ -44,11 +41,7 @@
      (take 64)
      last
      first)
-
 ;; => 25427
-
-
-;; Part 2
 
 (->> input
      (hashes 2017)
@@ -57,5 +50,4 @@
      (take 64)
      last
      first)
-
 ;; => 22045

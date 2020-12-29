@@ -1,4 +1,6 @@
-(ns adventofcode.2019.day08)
+(ns adventofcode.2019.day08
+  (:require
+   [clojure.string :as string]))
 
 (def image-data
   (->> "resources/2019/day08.txt"
@@ -11,18 +13,11 @@
 (def layers
   (partition (* width height) image-data))
 
-
-;; Part 1
-
 (->> (map frequencies layers)
      (apply min-key :0)
      ((juxt :1 :2))
      (apply *))
-
 ;; => 1806
-
-
-;; Part 2
 
 (defn color [pixels]
   (first (remove #{:2} pixels)))
@@ -34,8 +29,20 @@
   (map color (transpose layers)))
 
 (defn print-image [image]
-  (dorun (map println (partition width image))))
+  (dorun (->> image
+              (partition width)
+              (map (comp println
+                         #(string/escape % {\0 \. \1 \#})
+                         #(string/replace % ":" "")
+                         (partial apply str))))))
 
 (print-image image)
+
+;; ..##..##..####.###...##..
+;; ...#.#..#.#....#..#.#..#.
+;; ...#.#..#.###..#..#.#..#.
+;; ...#.####.#....###..####.
+;; #..#.#..#.#....#.#..#..#.
+;; .##..#..#.#....#..#.#..#.
 
 ;; => JAFRA

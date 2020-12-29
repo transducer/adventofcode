@@ -11,9 +11,6 @@
        string/split-lines
        (mapv parse)))
 
-
-;; Part 1
-
 (defn evaluate [instructions]
   (loop [seen #{} i 0 acc 0]
     (cond (seen i) {:acc acc :final-value nil}
@@ -24,11 +21,7 @@
                          (if (= op "acc") (+ acc arg) acc))))))
 
 (:acc (evaluate instructions))
-
 ;; => 1528
-
-
-;; Part 2
 
 (first
  (keep-indexed
@@ -38,5 +31,4 @@
       "jmp" (-> instructions (assoc i ["nop" arg]) evaluate :final-value)
       nil))
   instructions))
-
 ;; => 640

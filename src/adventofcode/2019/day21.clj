@@ -1,12 +1,10 @@
 (ns adventofcode.2019.day21
-  (:require [adventofcode.2019.intcode :refer [run]]
-            [clojure.string :as string]))
+  (:require
+   [adventofcode.2019.intcode :refer [run]]
+   [clojure.string :as string]))
 
 (def program
   (slurp "resources/2019/day21.txt"))
-
-
-;; Part 1
 
 (defn parse [script]
   (->> (str (string/join "\n" script) "\n")
@@ -21,11 +19,7 @@
    "WALK"])
 
 (peek (apply run program (parse script)))
-
 ;; => 19357390
-
-
-;; Part 2
 
 ;; (!A | !B | !C) & D & (H | E)
 (def script
@@ -42,5 +36,4 @@
    "RUN"])
 
 (peek (apply run program (parse script)))
-
 ;; => 1142844041

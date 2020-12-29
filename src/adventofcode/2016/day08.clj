@@ -1,6 +1,6 @@
 (ns adventofcode.2016.day08
-  (:require [clojure.java.io :as io]
-            [clojure.string :as str]))
+  (:require
+   [clojure.java.io :as io]))
 
 (def input
   (-> "2016/day08.txt" io/resource io/reader line-seq))
@@ -20,7 +20,8 @@
 (def width 50)
 (def height 6)
 
-(def screen (partition width (repeat (* width height) :off)))
+(def screen
+  (partition width (repeat (* width height) :off)))
 
 (defn rect
   [s a b]
@@ -67,22 +68,26 @@
        (filter #(= % :on))
        count))
 
-
-;; Part 1
-
 (->> input
      parse
      (reduce perform-operation screen)
      on-count)
+;; => 121
 
+(->> input
+     parse
+     (reduce perform-operation screen)
+     (map #(map (fn [toggle] (if (= toggle :on) "X" " ")) %))
+     (map #(interpose "  " (partition 5 %)))
+     (map #(str (apply str (flatten %)) "\n"))
+     (apply str)
+     (spit "resources/2016/day08-letters.txt"))
 
-;; Part 2
+;; XXX    X  X   XXX    X  X    XX    XXXX    XX    XXXX    XXX   X
+;; X  X   X  X   X  X   X  X   X  X   X      X  X   X        X    X
+;; X  X   X  X   X  X   X  X   X      XXX    X  X   XXX      X    X
+;; XXX    X  X   XXX    X  X   X      X      X  X   X        X    X
+;; X X    X  X   X X    X  X   X  X   X      X  X   X        X    X
+;; X  X    XX    X  X    XX     XX    XXXX    XX    XXXX    XXX   XXXX
 
- (->> input
-      parse
-      (reduce perform-operation screen)
-      (map #(map (fn [toggle] (if (= toggle :on) "X" " ")) %))
-      (map #(interpose "  " (partition 5 %)))
-      (map #(str (apply str (flatten %)) "\n"))
-      (apply str)
-      (spit "resources/day8-letters.txt"))
+;; => RURUCEOEIL

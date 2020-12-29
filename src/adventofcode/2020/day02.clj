@@ -12,15 +12,8 @@
 (defn valid? [{:keys [low high c pw]}]
   (<= low (get (frequencies pw) c 0) high))
 
-
-;; Part 1
-
 (count (filter (comp valid? parse) input))
-
 ;; => 572
-
-
-;; Part 2
 
 (defn valid2? [{:keys [low high c pw]}]
   (->> (map (vec pw) [(dec low) (dec high)])
@@ -29,5 +22,4 @@
        (= 1)))
 
 (count (filter (comp valid2? parse) input))
-
 ;; => 306

@@ -12,11 +12,7 @@
        b input
        :when (#{2020} (+ a b))]
    (* a b)))
-
 ;; => 1010884
-
-
-;; Part 2
 
 (first
  (for [a input
@@ -25,5 +21,4 @@
        c input
        :when (= (+ a b c) 2020)]
    (* a b c)))
-
 ;; => 253928438

@@ -1,6 +1,7 @@
 (ns adventofcode.2019.day25
-  (:require [adventofcode.2019.intcode :refer [run-async]]
-            [clojure.core.async :refer [chan alts!! timeout onto-chan]]))
+  (:require
+   [adventofcode.2019.intcode :refer [run-async]]
+   [clojure.core.async :refer [chan alts!! timeout onto-chan]]))
 
 (def program
   (slurp "resources/2019/day25.txt"))
@@ -18,5 +19,4 @@
         (printf "%s>" (apply str (map char received)))
         (onto-chan in (map int (str (read-line) \newline)) false)
         (recur [])))))
-
 ;; => 134807554

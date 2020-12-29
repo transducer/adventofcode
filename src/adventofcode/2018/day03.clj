@@ -1,5 +1,6 @@
 (ns adventofcode.2018.day03
-  (:require [clojure.java.io :as io]))
+  (:require
+   [clojure.java.io :as io]))
 
 (def input
   (-> "2018/day03.txt" io/resource io/reader line-seq))
@@ -14,9 +15,6 @@
 
 (def data
   (parse input))
-
-
-;; Part 1
 
 (def max-width
   (->> (map (fn [{:keys [x width]}] (+ x width)) data)
@@ -51,9 +49,7 @@
 (->> grid-claim-counts
      (filter #(> % 1))
      count)
-
-
-;; Part 2
+;; => 101469
 
 (->> data
      (filter (fn [{:keys [x y width height]}]
@@ -61,3 +57,4 @@
                        (mapv grid-claim-counts (square-indices x y width height)))))
      first
      :id)
+;; => 1067

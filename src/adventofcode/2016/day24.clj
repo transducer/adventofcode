@@ -1,9 +1,8 @@
 (ns adventofcode.2016.day24
-  (:require [clojure.data.priority-map :refer [priority-map]]
-            [clojure.java.io :as io]
-            [clojure.math.combinatorics :refer [permutations combinations]]
-            [clojure.set :as set]
-            [clojure.string :as str]))
+  (:require
+   [clojure.data.priority-map :refer [priority-map]]
+   [clojure.java.io :as io]
+   [clojure.math.combinatorics :refer [permutations combinations]]))
 
 (def input
   (-> "2016/day24.txt" io/resource io/reader line-seq))
@@ -31,7 +30,7 @@
 (def destinations
   "The position of the destinations, starting with \0"
   (->> maze
-       (filterv (fn [[pos point]] (<= 48 (int point) 55)))
+       (filterv (fn [[_pos point]] (<= 48 (int point) 55)))
        (sort-by second)
        (map first)))
 
@@ -90,7 +89,7 @@
 (defn possible-paths
   "Possible paths are start with all permutations of the next destinations
   added. Results in sequence of [start end], [a b], [b c], ... [n-1 n]."
-  [[start & to-visit :as destinations]]
+  [[start & to-visit :as _destinations]]
   (->> (permutations to-visit)
        (map #(conj % start))
        (map (partial partition 2 1))))
@@ -108,24 +107,17 @@
    0
    path))
 
-
-;; Part 1
-
 (->> destinations
      possible-paths
      (map distance-of-path)
      sort
      first)
-
 ;; => 518
-
-
-;; Part 2
 
 (defn possible-paths-back-to-start
   "Possible paths are start with all permutations of the next destinations
   added. Results in sequence of [start end], [a b], [b c], ... [n-1 n], [n a]."
-  [[start & to-visit :as destinations]]
+  [[start & to-visit :as _destinations]]
   (->> (permutations to-visit)
        (map #(concat [start] % [start]))
        (map (partial partition 2 1))))
@@ -135,5 +127,4 @@
      (map distance-of-path)
      sort
      first)
-
 ;; => 716

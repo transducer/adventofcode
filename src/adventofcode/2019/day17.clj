@@ -1,13 +1,11 @@
 (ns adventofcode.2019.day17
-  (:require [adventofcode.2019.intcode :refer [run]]
-            [clojure.java.io :as io]
-            [clojure.string :as string]))
+  (:require
+   [adventofcode.2019.intcode :refer [run]]
+   [clojure.java.io :as io]
+   [clojure.string :as string]))
 
 (def program
   (slurp (io/resource "2019/day17.txt")))
-
-
-;; Part 1
 
 (def grid
   (->> (run program)
@@ -43,11 +41,7 @@
    (apply str grid)))
 
 (reduce (fn [acc [x y]] (+ acc (* x y))) 0 intersections)
-
 ;; => 3920
-
-
-;; Part 2
 
 ;; Naive path of going straight always (by hand)
 (def path
@@ -91,5 +85,4 @@
        (apply concat)))
 
 (peek (apply run (string/replace-first program "1" "2") inputs))
-
 ;; => 673996

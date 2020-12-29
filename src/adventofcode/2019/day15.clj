@@ -1,16 +1,14 @@
 (ns adventofcode.2019.day15
-  (:require [adventofcode.2019.intcode :refer [run-async]]
-            [adventofcode.2019.util :refer [dijkstra]]
-            [clojure.core.async :as async :refer [chan >!! timeout alts!!]]
-            [clojure.java.io :as io]
-            [clojure.set :as set]
-            [medley.core :refer [filter-vals remove-vals]]))
+  (:require
+   [adventofcode.2019.intcode :refer [run-async]]
+   [adventofcode.2019.util :refer [dijkstra]]
+   [clojure.core.async :as async :refer [chan >!! timeout alts!!]]
+   [clojure.java.io :as io]
+   [clojure.set :as set]
+   [medley.core :refer [filter-vals remove-vals]]))
 
 (def program
   (slurp (io/resource "2019/day15.txt")))
-
-
-;; Part 1
 
 (def movements-commands
   {[0 1] 1, [0 -1] 2, [-1 0] 3, [1 0] 4})
@@ -90,11 +88,7 @@
           (recur new-node new-path new-q new-visited new-walls new-frontier))))))
 
 (depth-first-walk)
-
 ;; => 380
-
-
-;; Part 2
 
 (defn depth-first-explore
   "Walks the robot through the grid using DFS till every node is visited.
@@ -140,5 +134,4 @@
 (->> (dijkstra oxygen-system-node successors)
      distances
      (apply max))
-
 ;; => 410

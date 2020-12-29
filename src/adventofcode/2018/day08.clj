@@ -1,5 +1,6 @@
 (ns adventofcode.2018.day08
-  (:require [clojure.zip :as z]))
+  (:require
+   [clojure.zip :as z]))
 
 (def input
   (->> "resources/2018/day08.txt" slurp (format "[%s]") read-string))
@@ -35,18 +36,11 @@
               (recur next-loc all)))
       (root loc))))
 
-
-;; Part 1
-
 (->> tree-with-zipper
      flatten
      (mapcat :meta-data)
      (apply +))
-
 ;; => 49602
-
-
-;; Part 2
 
 (defn count-children
   "Gets children count of loc. Not counting meta data map as a child."
@@ -69,5 +63,4 @@
      values-of-loc
      flatten
      (apply +))
-
-;; 25656
+;; => 25656

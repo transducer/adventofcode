@@ -1,6 +1,7 @@
 (ns adventofcode.2016.day20
-  (:require [clojure.java.io :as io]
-            [clojure.string :as str]))
+  (:require
+   [clojure.java.io :as io]
+   [clojure.string :as string]))
 
 (def input (-> "2016/day20.txt" io/resource io/reader line-seq))
 
@@ -8,16 +9,12 @@
   (map #(Long/parseLong %) d))
 
 (defn parse [d]
-  (map parse-ints (map #(str/split % #"-") d)))
-
-
-;; Part 1
+  (map parse-ints (map #(string/split % #"-") d)))
 
 (let [d (sort-by first (parse input))]
   (loop [sorted        d
          [start1 end1] (first d)
-         high-end      end1
-         [start2 end2] (second d)]
+         high-end      end1]
     ;; If start1 is at least two bigger than highest, we have found the smallest
     ;; IP, and we can return it.
     (if (> (dec start1) high-end)
@@ -28,21 +25,15 @@
              (first (next sorted))
              ;; We will check the ends in the ranges, if they are higher than
              ;; end1, we update end1 with the new higher value
-             (max end1 high-end)
-             (second (next sorted))))))
-
+             (max end1 high-end)))))
 ;; => 4793564
-
-
-; Part 2
 
 (->> (parse input)
      (sort-by first)
      (reduce (fn [[highest cnt] [start end]]
-                 [(max highest end) (if (> start (inc highest))
-                                      (+ cnt (dec (- start highest)))
-                                      cnt)])
+               [(max highest end) (if (> start (inc highest))
+                                    (+ cnt (dec (- start highest)))
+                                    cnt)])
              [0 0])
      second)
-
 ;; => 146

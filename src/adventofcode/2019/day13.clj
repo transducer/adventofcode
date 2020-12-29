@@ -1,16 +1,14 @@
 (ns adventofcode.2019.day13
-  (:require [adventofcode.2019.intcode :refer [run-async]]
-            [clojure.core.async :as async :refer [chan <!! >!! close! timeout alts!!]]
-            [clojure.java.io :as io]
-            [clojure.string :as string]
-            [quil.core :as q]
-            [quil.middleware :as m]))
+  (:require
+   [adventofcode.2019.intcode :refer [run-async]]
+   [clojure.core.async :as async :refer [chan <!! >!! close! timeout alts!!]]
+   [clojure.java.io :as io]
+   [clojure.string :as string]
+   [quil.core :as q]
+   [quil.middleware :as m]))
 
 (def program
   (slurp (io/resource "2019/day13.txt")))
-
-
-;; Part 1
 
 (def out (chan 10000))
 (def in (chan))
@@ -23,11 +21,7 @@
 (->> (partition 3 outputs)
      (filter (fn [[_ _ type-id]] (= type-id 2)))
      count)
-
 ;; => 306
-
-
-;; Part 2
 
 (def out (chan 10000))
 (def in (chan))
@@ -90,5 +84,4 @@
   :update update-state
   :features [:keep-on-top]
   :middleware [m/fun-mode])
-
 ;; => 15328

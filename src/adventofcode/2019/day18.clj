@@ -1,9 +1,10 @@
 (ns adventofcode.2019.day18
-  (:require [clojure.data.priority-map :refer [priority-map]]
-            [clojure.java.io :as io]
-            [clojure.set :as set]
-            [clojure.string :as string]
-            [medley.core :refer [map-vals remove-keys]]))
+  (:require
+   [clojure.data.priority-map :refer [priority-map]]
+   [clojure.java.io :as io]
+   [clojure.set :as set]
+   [clojure.string :as string]
+   [medley.core :refer [map-vals remove-keys]]))
 
 (def input
   (-> "2019/day18.txt" io/resource slurp))
@@ -76,14 +77,8 @@
                                              (map-vals (partial + d))))
                 (assoc dists [idx picked-up-keys] d)))))))
 
-
-;; Part 1
-
 (dijkstra start #{})
 ;; => 6162
-
-
-;; Part 2
 
 (def closed-maze
   (->> maze
@@ -127,5 +122,4 @@
                  start (nth starts quadrant)]]
        (dijkstra start initial-keys))
      (reduce +))
-
 ;; => 1556

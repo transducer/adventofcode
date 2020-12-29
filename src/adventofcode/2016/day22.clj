@@ -1,8 +1,9 @@
 (ns adventofcode.2016.day22
-  (:require [clojure.java.io :as io]
-            [clojure.string :as str]))
+  (:require
+   [clojure.java.io :as io]))
 
-(def input (-> "2016/day22.txt" io/resource io/reader line-seq))
+(def input
+  (-> "2016/day22.txt" io/resource io/reader line-seq))
 
 (defn parse-ints [d]
   (map #(Integer/parseInt %) d))
@@ -31,14 +32,8 @@
 
 (def nodes (parse input))
 
-
-;; Part 1
-
 (count (viable-pairs nodes))
 ;; => 1034
-
-
-;; Part 2
 
 (defn str-insert
   "Insert c in string s at index i."
@@ -52,7 +47,7 @@
                         repeat
                         (take 28)
                         vec)]
-    (reduce (fn [grid {:keys [x y size used] :as node}]
+    (reduce (fn [grid {:keys [x y size used] :as _node}]
               (vec
                (concat
                 (take y grid)

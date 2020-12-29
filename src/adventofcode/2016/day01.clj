@@ -1,8 +1,9 @@
 (ns adventofcode.2016.day01
-  (:require [clojure.string :as str]))
+  (:require
+   [clojure.string :as string]))
 
 (def input
-  (-> "resources/2016/day01.txt" slurp str/trim-newline (str/split #", ")))
+  (-> "resources/2016/day01.txt" slurp string/trim-newline (string/split #", ")))
 
 (defn parse
   [data]
@@ -14,8 +15,8 @@
 
 (defn update-direction
   [curr turn]
-  (let [idx           (.indexOf directions curr)
-        new-idx       (mod (({\R inc \L dec} turn) idx) 4)
+  (let [idx (.indexOf directions curr)
+        new-idx (mod (({\R inc \L dec} turn) idx) 4)
         new-direction (directions new-idx)]
     new-direction))
 
@@ -23,10 +24,10 @@
   [pos direction dist]
   (->> pos
        (iterate (fn [[x y]]
-                  ({:east  [(inc x) y]
-                    :west  [(dec x) y]
-                    :north [x       (inc y)]
-                    :south [x       (dec y)]}
+                  ({:east [(inc x) y]
+                    :west [(dec x) y]
+                    :north [x (inc y)]
+                    :south [x (dec y)]}
                    direction)))
        (take (inc dist))
        rest))
@@ -47,17 +48,12 @@
   [point]
   (apply + (map #(Math/abs %) point)))
 
-
-;; Part 1
-
 (-> input
     parse
     positions
     last
     distance)
-
-
-;; Part 2
+;; => 332
 
 (defn first-visited-twice
   [points]
@@ -73,3 +69,4 @@
     positions
     first-visited-twice
     distance)
+;; => 166

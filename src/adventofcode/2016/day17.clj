@@ -1,6 +1,7 @@
 (ns adventofcode.2016.day17
-  (:require [digest :refer [md5]]
-            [clojure.set :as set]))
+  (:require
+   [digest :refer [md5]]
+   [clojure.set :as set]))
 
 (def passcode "ioramepc")
 (def grid-size 4)
@@ -12,9 +13,6 @@
        (map #(set/rename-keys % {0 \U 1 \D 2 \L 3 \R}))
        (filter #(first (vals %)))
        (mapcat keys)))
-
-#_(assert (= (allowed-directions "DU") '(\R)))
-#_(assert (empty? (allowed-directions "DUR")))
 
 (def moves
   {\U (fn [[x y]] [x (dec y)])
@@ -50,14 +48,8 @@
         (let [new-frontier (neighbors path pos)]
           (recur (into (sorted-map-by min-length) (merge (butlast frontier) new-frontier))))))))
 
-
-;; Part 1
-
 (dijkstra [0 0] neighbors [3 3])
 ;; => "RDDRULDDRR"
-
-
-;; Part 2
 
 (defn longest-path
   "Breadth-first search to find length of longest path from start to finish."

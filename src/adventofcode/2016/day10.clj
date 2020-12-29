@@ -1,5 +1,6 @@
 (ns adventofcode.2016.day10
-  (:require [clojure.java.io :as io]))
+  (:require
+   [clojure.java.io :as io]))
 
 (def input
   (-> "2016/day10.txt" io/resource io/reader line-seq))
@@ -19,11 +20,11 @@
       (let [[v b] (parse-ints (re-seq number-regex %))]
         {:chip v :bot b})
       (let [[_ b low-type low high-type high] (re-matches bot-regex %)]
-        {:bot       (Integer/parseInt b)
-         :low-type  (keyword low-type)
-         :low       (Integer/parseInt low)
+        {:bot (Integer/parseInt b)
+         :low-type (keyword low-type)
+         :low (Integer/parseInt low)
          :high-type (keyword high-type)
-         :high      (Integer/parseInt high)}))
+         :high (Integer/parseInt high)}))
    d))
 
 (defn give-initial-chips
@@ -52,9 +53,6 @@
                     distributors))
           bots))))
 
-
-;; Part 1
-
 (->> input
      parse
      give-initial-chips
@@ -63,9 +61,7 @@
      (filter #(= (set (:chips %)) #{17 61}))
      first
      :bot)
-
-
-;; Part 2
+;; => 161
 
 (->> input
      parse
@@ -78,3 +74,4 @@
      distinct
      (take 3)
      (apply *))
+;; => 133163

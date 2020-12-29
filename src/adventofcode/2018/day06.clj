@@ -1,7 +1,8 @@
 (ns adventofcode.2018.day06
-  (:require [clojure.java.io :as io]
-            [clojure.string :as string])
-  (:import clojure.lang.PersistentQueue))
+  (:require
+   [clojure.java.io :as io])
+  (:import
+   (clojure.lang PersistentQueue)))
 
 (def coordinates
   (->> (io/resource "2018/day06.txt")
@@ -56,20 +57,15 @@
                (merge-with #(min (first %1) (first %2)) distances frontier)))
       distances)))
 
-
-;; Part 1
-
 (->> (pmap #(breadth-first-search % neighbours-in-grid) coordinates)
      (apply interleave)
      (reduce
       (fn [acc [coord [dist start]]]
         (if-let [prev-coord (acc coord)]
-          (let [[prev-dist prev-start boundary?] prev-coord]
+          (let [[prev-dist _prev-start _boundary?] prev-coord]
             ;; Like every interesting procedure, it's a case analysis. (https://youtu.be/0m6hoOelZH8?t=331)
-            (cond (= prev-dist dist)
-                  (assoc acc coord [dist start true])
-                  (> prev-dist dist)
-                  (assoc acc coord [dist start false])
+            (cond (= prev-dist dist) (assoc acc coord [dist start true])
+                  (> prev-dist dist) (assoc acc coord [dist start false])
                   :else acc))
           (assoc acc coord [dist start false])))
       {}) ; -> map of coord -> [distance start boundary?]
@@ -79,15 +75,14 @@
      (remove (fn [[_start coords-closest]] (some #(on-edge? %) coords-closest)))
      (map (fn [[_start coords-closest]] (count coords-closest)))
      (apply max))
-
-
-;; Part 2
+;; => 6047
 
 (->> (pmap #(breadth-first-search % neighbours-in-grid) coordinates)
      (apply concat)
      (group-by first)
      (vals)
      (pmap (fn [coord->dist-starts]
-             (reduce (fn [acc [_coord [dist start]]] (+ acc dist)) 0 coord->dist-starts)))
+             (reduce (fn [acc [_coord [dist _start]]] (+ acc dist)) 0 coord->dist-starts)))
      (remove (fn [distance] (>= distance 10000)))
      (count))
+;; => 46320

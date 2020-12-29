@@ -5,17 +5,20 @@
   (-> "2016/day25.txt" io/resource io/reader line-seq))
 
 (defn parse-ints [s]
-  (map #(try (Integer/parseInt %) (catch NumberFormatException e %)) s))
+  (map #(try (Integer/parseInt %) (catch NumberFormatException _ %)) s))
 
 (defn parse [d]
   (mapv #(parse-ints (re-seq #"-*\w+" %)) d))
 
-(def instructions (parse input))
-(def length (count instructions))
+(def instructions
+  (parse input))
+
+(def length
+  (count instructions))
 
 (defn invalid?
   "Instruction is invalid when copying to a number instead of register."
-  [[cmd n1 n2]]
+  [[cmd _n1 n2]]
   (and (= cmd "cpy") (number? n2)))
 
 (defn toggle
@@ -23,18 +26,18 @@
   [instructions registers n1 pos]
   (let [ins-pos (+ (or (registers n1) n1) pos)]
     (if (<= 0 ins-pos (dec length))
-      (let [[cmd n1 n2 :as ins] (instructions ins-pos)]
-           (vec
-            (concat
-             (take ins-pos instructions)
-             [(case cmd
-                "cpy" ["jnz" n1 n2]
-                "jnz" ["cpy" n1 n2]
-                "inc" ["dec" n1]
-                "dec" ["inc" n1]
-                "out" ["inc" n1]
-                "tgl" ["inc" n1])]
-             (drop (inc ins-pos) instructions))))
+      (let [[cmd n1 n2 :as _ins] (instructions ins-pos)]
+        (vec
+         (concat
+          (take ins-pos instructions)
+          [(case cmd
+             "cpy" ["jnz" n1 n2]
+             "jnz" ["cpy" n1 n2]
+             "inc" ["dec" n1]
+             "dec" ["inc" n1]
+             "out" ["inc" n1]
+             "tgl" ["inc" n1])]
+          (drop (inc ins-pos) instructions))))
       instructions)))
 
 (defn execute
@@ -67,5 +70,4 @@
       (filter #(= (take 10 zeroes-and-ones) (take 10 (% "output"))))
       first)
  "input")
-
 ;; => 180

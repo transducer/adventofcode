@@ -1,7 +1,8 @@
 (ns adventofcode.2019.day12
-  (:require [clojure.java.io :as io]
-            [clojure.math.numeric-tower :refer [abs lcm]]
-            [clojure.string :as string]))
+  (:require
+   [clojure.java.io :as io]
+   [clojure.math.numeric-tower :refer [abs lcm]]
+   [clojure.string :as string]))
 
 (def moons
   (->> (io/resource "2019/day12.txt")
@@ -35,15 +36,8 @@
                  (apply + (map abs (vals positions))))))
        (apply +)))
 
-
-;; Part 1
-
 (energy (nth (iterate gravity moons) 1000))
-
 ;; => 6220
-
-
-;; Part 2
 
 (defn idx-back-to-initial-state [states]
   (first
@@ -58,3 +52,4 @@
        idx-back-to-initial-state))
 
 (reduce lcm (map period (range 4)))
+;; => 548525804273976

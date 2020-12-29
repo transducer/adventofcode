@@ -19,13 +19,7 @@
 (defn valid? [passport]
   (every? passport #{"byr" "iyr" "eyr" "hgt" "hcl" "ecl" "pid"}))
 
-
-;; Part 1
-
-(count (filter valid? passports))
-
-;; => 250
-
+(count (filter valid? passports)) ; => 250
 
 (defn parse-or-0 [s]
   (try (Integer. s) (catch Exception _ 0)))
@@ -55,9 +49,4 @@
        (#{"amb" "blu" "brn" "gry" "grn" "hzl" "oth"} ecl)
        (valid-pid? pid)))
 
-
-;; Part 2
-
-(count (filter valid2? passports))
-
-;; => 158
+(count (filter valid2? passports)) ; => 158
