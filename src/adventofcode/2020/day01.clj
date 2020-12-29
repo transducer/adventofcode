@@ -4,7 +4,8 @@
   (->> "resources/2020/day01.txt"
        slurp
        (format "[%s]")
-       read-string))
+       read-string
+       sort))
 
 (first
  (for [a input
